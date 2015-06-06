@@ -5,14 +5,9 @@
 {% block content %}
   <h1>Add a New Bill</h1>
 
-  <form action="/recipes/addbill/" method="post" class="form" id="formaddbill">
+  <form action="/addbill/" method="post" class="form" id="formaddbill">
     {% csrf_token %}
-    {% load bootstrap3 %}
-    {% bootstrap_form form layout='inline' %}
-      <textarea></textarea>
-      <button type="submit" class="btn btn-primary">
-        Add bill
-      </button>
+    {{ form.as_p }}
+    <input type="submit" value="Add Bill" />
   </form>
 {% endblock %}
-

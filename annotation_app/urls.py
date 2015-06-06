@@ -18,5 +18,6 @@ from annotation_app import views
 
 urlpatterns = [
     url(r'^index/$', views.index),
-    url(r'^', views.index)
+    url(r'^$', views.index),
+    url(r'^addbill/$', views.add_bill),
 ]
