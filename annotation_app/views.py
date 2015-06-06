@@ -17,3 +17,11 @@ def add_bill(request):
   else:
     form = BillForm()
   return render(request, 'addbill.html', {'form': form})
+
+def bill(request, bill_id):
+  try:
+    bill = Bill.objects.get(id = bill_id)
+  except Bill.DoesNotExist:
+    raise Http404
+  context = {'bill': bill}
+  return render(request, 'bill.html', context)
