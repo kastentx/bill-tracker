@@ -1,6 +1,4 @@
-
-
-
+# -*- coding: utf-8 -*-
 import requests, bs4
 
 bill_number = input('bill number')
@@ -12,22 +10,30 @@ if not res.status_code == requests.codes.ok:
     print('not a vaild bill!')
 html = bs4.BeautifulSoup(res.text)
 clean_text = html.get_text()
+#print('cleantext', clean_text)
 
 period=clean_text.split('.')
 #print (period)
 
 index=len(period)-1
 print(index)
+
 span_list=[]
 i=0
 while i<= index:
     #print(period[i]+'ENDDDDDD')
     span='<span>'+period[i]+'</span>'
-    print(span)
+    #print(span)
     span_list.append(span)
     #print(span_list)
     #period[i].append('</span>')
     #span+=period[i]
     i+=1
 
-print (span_list)
+stringtext = ''.join(span_list)
+badchars=['\n','\xa0','\r','\t']
+for i in badchars:
+    stringtext = stringtext.strip(i)
+
+print(stringtext)
+#print(span_list)
