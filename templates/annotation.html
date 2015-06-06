@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Annotation{% endblock %}
+
+{% block content %}
+  Annotation: <br />
+  {{ annotation.text }} <br />
+
+  <form action="/addcomment/" method="post" class="form" id="formaddcomment">
+    {% csrf_token %}
+    <input type="hidden" name="add_for" value="{{ annotation.id }}" />
+    <input type="submit" value="Add Comment" />
+  </form>
+{% endblock %}
+

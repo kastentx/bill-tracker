@@ -9,6 +9,7 @@
     id="formaddannotation">
     {% csrf_token %}
     {{ form.as_p }}
+    <input type="hidden" name="bill_id" value="{{ bill_id }}" />
     <input type="submit" value="Add Annotation" />
   </form>
 {% endblock %}

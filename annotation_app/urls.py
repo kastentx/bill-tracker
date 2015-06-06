@@ -21,4 +21,9 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'^addbill/$', views.add_bill),
     url(r'^bills/(?P<bill_id>\d+)/$', views.bill, name='bill'),
+    url(r'^addannotation/$', views.add_annotation, name='add_annotation'),
+    url(r'^annotations/(?P<annotation_id>\d+)/$', views.annotation,
+      name='annotation'),
+    url(r'^addcomment/$', views.add_comment),
+    url(r'^comments/(?P<comment_id>\d+)/$', views.comment, name='comment'),
 ]
