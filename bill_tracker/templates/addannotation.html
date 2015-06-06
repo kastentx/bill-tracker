@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Add Annotation{% endblock %}
+
+{% block content %}
+  <h1>Add a New Annotation</h1>
+
+  <form action="/recipes/addannotation/" method="post" class="form" id="formaddannotation">
+    {% csrf_token %}
+    {% load bootstrap3 %}
+    {% bootstrap_form form layout='inline' %}
+      <textarea></textarea>
+      <button type="submit" class="btn btn-primary">
+        Submit bill
+      </button>
+  </form>
+{% endblock %}
+
