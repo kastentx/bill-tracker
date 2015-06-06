@@ -5,6 +5,7 @@ class Bill(models.Model):
 
 class Annotation(models.Model):
   bill_id = models.ForeignKey(Bill)
+  sentence_id = models.PositiveIntegerField()
   text = models.TextField()
 
 class Comment(models.Model):
