@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^index/$', views.index),
     url(r'^$', views.index),
     url(r'^addbill/$', views.add_bill),
+    url(r'^bills/(?P<bill_id>\d+)/$', views.bill, name='bill'),
 ]
