@@ -3,11 +3,17 @@
 {% block title %}Add Bill{% endblock %}
 
 {% block content %}
-  <h1>Add a New Bill</h1>
 
-  <form action="/addbill/" method="post" class="form" id="formaddbill">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Add Bill" />
-  </form>
+	<div class="container containerAddBill">
+	
+		<h3>Add a New Bill</h3>
+
+		<form action="/addbill/" method="post" class="form" id="formaddbill">
+			{% csrf_token %}
+			{{ form }}
+			<input class="btn btn-primary" type="submit" value="Add Bill" />
+		</form>
+
+	</div>
+
 {% endblock %}
