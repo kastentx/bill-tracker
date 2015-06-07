@@ -13,7 +13,7 @@
 
     <ul class="nav nav-pills nav-stacked">
       {% for bill in bill_list %}
-        <li class="active"><a href="{{ bill.id }}/">
+        <li class="active"><a href="/bills/{{ bill.id }}/">
           {{ bill.text|slice:":1000"|safe }}
         </a></li>
       {% endfor %}
