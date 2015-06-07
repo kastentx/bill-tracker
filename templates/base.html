@@ -8,15 +8,14 @@
   {% load staticfiles %}
   <link rel="stylesheet" href="{% static "bootstrap.css" %}" media="screen">
   <link rel="stylesheet" href="{% static "styles.css" %}">
-  <script language="javascript" type="text/javascript" src="{% static "global.js" %}"></script>
-
-
 </head>
 <body>
 
   <div class="container">
     {% load staticfiles %}
-    <img id="logo" src="{% static "logo-blue.png" %}" alt="My image"/>
+    <a href="/">
+      <img id="logo" src="{% static "logo-blue.png" %}" alt="My image"/>
+    </a>
   </div>
 
   <div class="bs-component">
@@ -71,6 +70,7 @@
   {% load staticfiles %}
   <script src="{% static "jquery-1.10.2.min.js" %}"></script>
   <script src="{% static "bootstrap.min.js" %}"></script>
+  <script language="javascript" type="text/javascript" src="{% static "global.js" %}"></script>
   <!-- <script src="{% static "bootswatch.js" %}"></script> -->
 </body>
 </html>
