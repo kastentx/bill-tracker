@@ -9,9 +9,10 @@
   </div>
 
 {% block content %}
-  {% if bill_list %}
 
   <div class="container bill-list">
+  
+  {% if bill_list %}
 
     <ul class="nav nav-pills nav-stacked">
       {% for bill in bill_list %}
