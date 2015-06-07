@@ -6,7 +6,6 @@ from annotation_app.bill_parse import get_history, Bill_Import
 
 from annotation_app.models import Bill, Annotation, Comment
 from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm, BillEditForm
-from django.core.serializers import serialize, deserialize
 
 
 def index(request):
