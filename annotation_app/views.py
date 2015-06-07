@@ -1,12 +1,12 @@
 import bs4
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import requests
 from annotation_app.bill_parse import get_history
 
 from annotation_app.models import Bill, Annotation, Comment
 from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm
-
+from django.core.serializers import serialize, deserialize
 
 def index(request):
   return render(request, 'base.html')
@@ -25,13 +25,13 @@ def add_bill(request):
       bill.number = data['number']
       bill_txt = get_bill_text(str(bill.number))
       if (bill_txt == None):
-        return "Invalid bill number."
+        return HttpResponse("Invalid bill number.")
       else:
         bill.text = bill_txt
       subjects = get_history("SB", str(bill.number))
       bill.subjects = Bill.serialize(subjects)
       bill.save()
-      return HttpResponseRedirect("/index/")
+      return HttpResponse(serialize('json', [bill]))
   else:
     form = BillForm()
   return render(request, 'addbill.html', {'form': form})
