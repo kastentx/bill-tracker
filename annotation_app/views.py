@@ -1,11 +1,11 @@
 import bs4
-from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render, redirect
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import render
 import requests
 from annotation_app.bill_parse import get_history
 
 from annotation_app.models import Bill, Annotation, Comment
-from annotation_app.forms import AnnotationForm, CommentForm, BillForm
+from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm
 
 
 def index(request):
@@ -77,11 +77,11 @@ def bill(request, bill_id):
 def add_annotation(request):
   if request.method == 'POST':
     if 'add_for' in request.POST:
-      form = AnnotationForm()
+      form = AnnotationAddForm()
       return render(request, 'addannotation.html',
         {'form': form, 'bill_id': request.POST['add_for']})
     else:
-      form = AnnotationForm(request.POST)
+      form = AnnotationAddForm(request.POST)
       if form.is_valid():
         data = form.cleaned_data
         r = Annotation()
@@ -103,11 +103,11 @@ def annotation(request, annotation_id):
 def add_comment(request):
   if request.method == 'POST':
     if 'add_for' in request.POST:
-      form = CommentForm()
+      form = CommentAddForm()
       return render(request, 'addcomment.html',
         {'form': form, 'annotation_id': request.POST['add_for']})
     else:
-      form = CommentForm(request.POST)
+      form = CommentAddForm(request.POST)
       if form.is_valid():
         data = form.cleaned_data
         r = Comment()
