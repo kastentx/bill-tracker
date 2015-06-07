@@ -10,10 +10,11 @@ class Bill(models.Model):
   last_action = models.CharField(max_length=255, default= "null")
   caption_version = models.CharField(max_length=255, default= "null")
   caption_text = models.TextField(default="null")
-  coauthor = models.CharField(max_length=255, default= "null")
-  sponsor = models.CharField(max_length=255, default="null")
-  cosponsor = models.CharField(max_length=255, default= "null")
+  coauthors = models.CharField(max_length=255, default= "null")
+  sponsors = models.CharField(max_length=255, default="null")
+  cosponsors = models.CharField(max_length=255, default= "null")
   subjects = models.TextField(default="null")
+  authors = models.TextField(default="null")
 
   def serialize(object):
     return json.dumps(object)
