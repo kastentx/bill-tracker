@@ -1,11 +1,12 @@
 import bs4
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import requests
 from annotation_app.bill_parse import get_history, Bill_Import
 
 from annotation_app.models import Bill, Annotation, Comment
-from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm
+from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm, BillEditForm
+from django.core.serializers import serialize, deserialize
 
 
 def index(request):
@@ -66,7 +67,7 @@ def add_bill(request):
       ####
 
       bill.save()
-      return HttpResponseRedirect("/index/")
+      return HttpResponse(Bill.serialize('json', [bill]))
   else:
     form = BillForm()
   return render(request, 'addbill.html', {'form': form})
@@ -180,3 +181,6 @@ def edit_bill(request, bill_id):
     form = BillEditForm(initial={'id': bill.id, 'text': bill.text})
   return render(request, 'billform.html',
     {'form': form, 'method': 'edit', 'id': bill.id})
+
+def example_client(request):
+  return render(request, 'example.html')
