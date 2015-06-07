@@ -1,39 +1,53 @@
 {% extends "base.html" %}
 
+<div class="container">
+<div class="row">
+
 {% block title %}Bill{% endblock %}
 
 {% block content %}
-  <p>
-  Bill: <br />
-  {{ bill.text }}
-  <a href="/bills/{{ bill.id }}/edit/">Edit</a>
-  </p>
+  
+  <div class="page-header">
+    <h1 id="navbar">Bill</h1>
+  </div>
 
-  <p>
-  Annotations:
-  {% if annotation_list %}
-    <ul>
-      {% for annotation in annotation_list %}
-        {% if annotation.text|length > 10  %}
-          <li><a href="/annotations/{{ annotation.id }}/">
-            {{ annotation.text|slice:":10" }}
-          </a></li>
-        {% else %}
-          <li><a href="/annotations/{{ annotation.id }}/">{{ annotation.text }}
-          </a></li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>you haven't added any annotations yet!</p>
-  {% endif %}
-  </p>
+  <div class="col-xs-8 billarea">
+    {{ bill.text }}
+  </div>
 
-  <form action="/addannotation/" method="post" class="form"
-    id="formaddannotation">
-    {% csrf_token %}
-    <input type="hidden" name="add_for" value="{{ bill.id }}" />
-    <input type="submit" value="Add Annotation" />
-  </form>
+  <div class="col-xs-4" id="submission">
+
+    {% if annotation_list %} 
+      <ul>
+        {% for annotation in annotation_list %}
+          {% if annotation.text|length > 10  %}
+            <li><a href="/annotations/{{ annotation.id }}/">
+              {{ annotation.text|slice:":10" }}
+            </a></li>
+          {% else %}
+            <li><a href="/annotations/{{ annotation.id }}/">{{ annotation.text }}
+            </a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>you haven't added any annotations yet!</p>
+    {% endif %}
+
+  
+    <div class="form-group">
+      <form action="/addannotation/" method="post" class="form" id="formaddannotation">
+        <label for="annotation">Annotation:</label>
+        <textarea class="form-control" rows="1" id="annotation"></textarea>
+        {% csrf_token %}
+        <input type="hidden" name="add_for" value="{{ bill.id }}" />
+        <button class="btn" type="submit" id="submitbutton" onClick="submitAnnotation(annotation)">Submit Annotation</button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
 {% endblock %}
-
