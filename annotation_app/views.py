@@ -129,4 +129,19 @@ def comment(request, comment_id):
 # TODO: Implement
 
 def edit_bill(request, bill_id):
-  pass
+  try:
+    bill = Bill.objects.get(id = bill_id)
+  except Bill.DoesNotExist:
+    raise Http404
+
+  if request.method == 'POST':
+    form = BillEditForm(request.POST)
+    if form.is_valid():
+      data = form.cleaned_data
+      bill.text = data['text']
+      bill.save()
+      return HttpResponseRedirect('/bills/%d/' % bill.id)
+  else:
+    form = BillEditForm(initial={'id': bill.id, 'text': bill.text})
+  return render(request, 'billform.html',
+    {'form': form, 'method': 'edit', 'id': bill.id})
