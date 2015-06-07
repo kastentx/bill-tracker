@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Add Annotation{% endblock %}
+{% block title %}Bill{% endblock %}
 
 {% block content %}
-  <h1>Add a New Annotation</h1>
+  Bill: <br />
+  {{ bill.text }} <br />
 
   <form action="/addannotation/" method="post" class="form"
     id="formaddannotation">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="hidden" name="bill_id" value="{{ bill_id }}" />
+    <input type="hidden" name="add_for" value="{{ bill.id }}" />
     <input type="submit" value="Add Annotation" />
   </form>
 {% endblock %}
+

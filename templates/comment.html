@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Comment{% endblock %}
+
+{% block content %}
+  Comment: <br />
+  {{ comment.text }} <br />
+
+  <!--form action="/addannotation/" method="post" class="form"
+    id="formaddannotation">
+    {% csrf_token %}
+    <input type="hidden" name="add_for" value="{{ bill.id }}" />
+    <input type="submit" value="Add Annotation" />
+  </form-->
+{% endblock %}
+

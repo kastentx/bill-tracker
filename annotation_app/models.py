@@ -23,10 +23,11 @@ class Senator(models.Model):
 
 
 class Annotation(models.Model):
-  reporter = models.ForeignKey(Bill)
+  bill_id = models.ForeignKey(Bill)
+  sentence_id = models.PositiveIntegerField()
   text = models.TextField()
 
 class Comment(models.Model):
-  reporter = models.ForeignKey(Annotation)
+  annotation_id = models.ForeignKey(Annotation)
   text = models.TextField()
   
