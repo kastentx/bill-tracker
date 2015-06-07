@@ -145,3 +145,6 @@ def edit_bill(request, bill_id):
     form = BillEditForm(initial={'id': bill.id, 'text': bill.text})
   return render(request, 'billform.html',
     {'form': form, 'method': 'edit', 'id': bill.id})
+
+def example_client(request):
+  return render(request, 'example.html')

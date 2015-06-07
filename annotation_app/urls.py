@@ -18,7 +18,7 @@ from annotation_app import views
 
 urlpatterns = [
     url(r'^index/$', views.index),
-    url(r'^$', views.index),
+    url(r'^$', views.bill_list, name='bill_list'),
     url(r'^bills/$', views.bill_list, name='bills'),
     url(r'^addbill/$', views.add_bill, name='add_bill'),
     url(r'^bills/(?P<bill_id>\d+)/$', views.bill, name='bill'),
@@ -28,4 +28,5 @@ urlpatterns = [
       name='annotation'),
     url(r'^addcomment/$', views.add_comment, name='add_comment'),
     url(r'^comments/(?P<comment_id>\d+)/$', views.comment, name='comment'),
+    url(r'^example-client/$', views.example_client, name='example_client'),
 ]
