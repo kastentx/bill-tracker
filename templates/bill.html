@@ -12,7 +12,7 @@
   </div>
 
   <div class="col-xs-8 billarea">
-    {{ bill.text }}
+    {{ bill.text|safe|slice:"2:-2" }}
   </div>
 
   <div class="col-xs-4" id="submission">
@@ -25,7 +25,8 @@
               {{ annotation.text|slice:":10" }}
             </a></li>
           {% else %}
-            <li><a href="/annotations/{{ annotation.id }}/">{{ annotation.text }}
+            <li><a href="/annotations/{{ annotation.id }}/">
+              {{ annotation.text }}
             </a></li>
           {% endif %}
         {% endfor %}
