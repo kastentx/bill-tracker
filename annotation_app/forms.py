@@ -22,3 +22,11 @@ class CommentAddForm(forms.Form):
 
 class CommentEditForm(CommentAddForm):
   id = forms.HiddenInput()
+
+# Deprecated
+
+class AnnotationForm(AnnotationAddForm):
+  pass
+
+class CommentForm(CommentAddForm):
+  pass
