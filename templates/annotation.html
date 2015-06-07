@@ -6,6 +6,23 @@
   Annotation: <br />
   {{ annotation.text }} <br />
 
+  {% if comment_list %}
+    <ul>
+      {% for comment in comment_list %}
+        {% if comment.text|length > 10  %}
+          <li><a href="/comments/{{ comment.id }}/">
+            {{ comment.text|slice:":10" }}
+          </a></li>
+        {% else %}
+          <li><a href="/comments/{{ comment.id }}/">{{ comment.text }}
+          </a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>you haven't added any comments yet!</p>
+  {% endif %}
+
   <form action="/addcomment/" method="post" class="form" id="formaddcomment">
     {% csrf_token %}
     <input type="hidden" name="add_for" value="{{ annotation.id }}" />

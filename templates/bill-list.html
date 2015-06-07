@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Bill List{% endblock %}
+
+{% block content %}
+  {% if bill_list %}
+    <ul>
+      {% for bill in bill_list %}
+        <li><a href="{{ bill.id }}/">{{ bill.text|slice:":10" }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>you haven't added any bills yet!</p>
+  {% endif %}
+
+  <a href="addrecipe/">Create a new bill</a>
+{% endblock %}
