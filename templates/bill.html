@@ -6,6 +6,23 @@
   Bill: <br />
   {{ bill.text }} <br />
 
+  {% if annotation_list %}
+    <ul>
+      {% for annotation in annotation_list %}
+        {% if annotation.text|length > 10  %}
+          <li><a href="/annotations/{{ annotation.id }}/">
+            {{ annotation.text|slice:":10" }}
+          </a></li>
+        {% else %}
+          <li><a href="/annotations/{{ annotation.id }}/">{{ annotation.text }}
+          </a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>you haven't added any annotations yet!</p>
+  {% endif %}
+
   <form action="/addannotation/" method="post" class="form"
     id="formaddannotation">
     {% csrf_token %}
