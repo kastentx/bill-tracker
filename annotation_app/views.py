@@ -8,6 +8,7 @@ from annotation_app.models import Bill, Annotation, Comment
 from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm, BillEditForm
 
 
+
 def index(request):
   return render(request, 'base.html')
 
@@ -183,3 +184,56 @@ def edit_bill(request, bill_id):
 
 def example_client(request):
   return render(request, 'example.html')
+
+from django.core.serializers import serialize
+
+def get_bill(request):
+  print(request.GET)
+  bill = Bill()
+  bill.number = request.GET['bill_number']
+  # #bill_txt = get_bill_text(str(bill.number))
+  # #print("Checkpoint2")
+  # #if (bill_txt == None):
+  # #  return Http404
+  # #else:
+  # #  bill.text = bill_txt
+  # #subjects = get_history("SB", str(bill.number))
+  # #bill.subjects = Bill.serialize(subjects)
+  # print("Checkpoint2")
+  # ####
+  billsb10 = Bill_Import()
+  billsb10.set_bill_num('10')
+  billsb10.pull_billtext()
+  bill_list = billsb10.billtext
+  bill.text = Bill.serialize(bill_list)
+  # print("Checkpoint3")
+  billsb10.pull_history()
+  # print("Checkpoint4")
+  billsb10.set_authors()
+  bill.authors = Bill.serialize(billsb10.authors)
+  # print("Checkpoint5")
+  billsb10.set_coauthors()
+  bill.coauthors = Bill.serialize(billsb10.coauthors)
+  # print("Checkpoint5")
+  billsb10.set_subjects()
+  bill.subjects = Bill.serialize(billsb10.subjects)
+  # print("Checkpoint6")
+  billsb10.set_cosponsors()
+  bill.cosponsors = Bill.serialize(billsb10.cosponsors)
+  # print("Checkpoint7")
+  billsb10.set_sponsors()
+  bill.sponsors = Bill.serialize(billsb10.sponsors)
+  # print('authors', Bill.deserialize(bill.authors))
+  # print('billtext', Bill.deserialize(bill.text))
+  # print('subjects', Bill.deserialize(bill.subjects))
+  # print('coauthors', Bill.deserialize(bill.coauthors))
+  # print('sponsors', Bill.deserialize(bill.sponsors))
+  # print('cosponsors', Bill.deserialize(bill.cosponsors))
+
+  # ####
+
+  bill.save()
+  return HttpResponse(serialize('json', [bill]))
+
+def megalith(request):
+  return render(request, 'megalith/megalith.html')
