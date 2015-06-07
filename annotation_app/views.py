@@ -67,7 +67,7 @@ def add_bill(request):
       ####
 
       bill.save()
-      return HttpResponse(Bill.serialize('json'), [bill])
+      return HttpResponseRedirect('/bills/%d/' % bill.id)
   else:
     form = BillForm()
   return render(request, 'addbill.html', {'form': form})
