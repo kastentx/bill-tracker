@@ -1,3 +1,4 @@
+import json
 from django.db import models
 
 class Bill(models.Model):
@@ -11,7 +12,13 @@ class Bill(models.Model):
   coauthor = models.CharField(max_length=255, default= "null")
   sponsor = models.CharField(max_length=255, default="null")
   cosponsor = models.CharField(max_length=255, default= "null")
-  subjects = models.TextField(default="null")
+  subjects = models.TextField(default="null") # it's a serialized (JSON string) list of subject strings
+
+  def serialize(object):
+    return json.dumps(object)
+
+  def deserialize(object):
+    return json.loads(object)
 
 
 class Senator(models.Model):
