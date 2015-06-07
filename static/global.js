@@ -1,3 +1,39 @@
+
+
+/* -------------- nav click functionality ------------------- */
+
+$('.navbar-collapse a').click(function(e){
+	
+	var clickedLink = $(this);
+	var clickedLi = clickedLink.parent();
+	var lis = $('.navbar-collapse li');
+
+	var searchTerm = clickedLink.text().toLowerCase();
+	console.log('run ajax for ' + searchTerm + ' here.');
+
+	lis.removeClass('active');
+	clickedLi.addClass('active');
+
+	e.preventDefault();
+
+});
+
+
+
+
+
+
+
+/* -------------- search functionality ------------------- */
+
+
+
+
+
+
+
+/* -------------- single bill view functionality ------------------- */
+
 var lastClicked;
 
 function toggleForm(sentence)
