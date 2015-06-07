@@ -3,8 +3,30 @@
 {% block title %}Annotation{% endblock %}
 
 {% block content %}
+  <p>
   Annotation: <br />
   {{ annotation.text }} <br />
+  </p>
+
+  <p>
+  Comments:
+  {% if comment_list %}
+    <ul>
+      {% for comment in comment_list %}
+        {% if comment.text|length > 10  %}
+          <li><a href="/comments/{{ comment.id }}/">
+            {{ comment.text|slice:":10" }}
+          </a></li>
+        {% else %}
+          <li><a href="/comments/{{ comment.id }}/">{{ comment.text }}
+          </a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>you haven't added any comments yet!</p>
+  {% endif %}
+  </p>
 
   <form action="/addcomment/" method="post" class="form" id="formaddcomment">
     {% csrf_token %}

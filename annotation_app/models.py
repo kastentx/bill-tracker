@@ -1,5 +1,6 @@
-import json
 from django.db import models
+from flask import json
+
 
 class Bill(models.Model):
   text = models.TextField()
@@ -12,14 +13,13 @@ class Bill(models.Model):
   coauthor = models.CharField(max_length=255, default= "null")
   sponsor = models.CharField(max_length=255, default="null")
   cosponsor = models.CharField(max_length=255, default= "null")
-  subjects = models.TextField(default="null") # it's a serialized (JSON string) list of subject strings
+  subjects = models.TextField(default="null")
 
   def serialize(object):
     return json.dumps(object)
 
   def deserialize(object):
     return json.loads(object)
-
 
 class Senator(models.Model):
   name = models.CharField(max_length=255)
@@ -31,7 +31,7 @@ class Senator(models.Model):
 
 class Annotation(models.Model):
   bill_id = models.ForeignKey(Bill)
-  sentence_id = models.PositiveIntegerField()
+  sentence_id = models.PositiveIntegerField(null=True)
   text = models.TextField()
 
 class Comment(models.Model):

@@ -11,6 +11,11 @@ from annotation_app.forms import AnnotationForm, CommentForm, BillForm
 def index(request):
   return render(request, 'base.html')
 
+def bill_list(request):
+  bill_list = Bill.objects.all()
+  context = {'bill_list': bill_list}
+  return render(request, 'bill-list.html', context)
+
 def add_bill(request):
   if request.method == 'POST':
     form = BillForm(request.POST)
@@ -65,7 +70,8 @@ def bill(request, bill_id):
     bill = Bill.objects.get(id = bill_id)
   except Bill.DoesNotExist:
     raise Http404
-  context = {'bill': bill}
+  annotation_list = Annotation.objects.filter(bill_id=bill)
+  context = {'bill': bill, 'annotation_list': annotation_list}
   return render(request, 'bill.html', context)
 
 def add_annotation(request):
@@ -90,7 +96,8 @@ def annotation(request, annotation_id):
     annotation = Annotation.objects.get(id = annotation_id)
   except Annotation.DoesNotExist:
     raise Http404
-  context = {'annotation': annotation}
+  comment_list = Comment.objects.filter(annotation_id=annotation)
+  context = {'annotation': annotation, 'comment_list': comment_list}
   return render(request, 'annotation.html', context)
 
 def add_comment(request):
