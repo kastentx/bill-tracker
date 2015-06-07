@@ -3,10 +3,22 @@ from django import forms
 class BillForm(forms.Form):
   number = forms.IntegerField()
 
-class AnnotationForm(forms.Form):
+class BillAddForm(forms.Form):
+  text = forms.CharField(label='text')
+
+class BillEditForm(BillAddForm):
+  id = forms.HiddenInput()
+
+class AnnotationAddForm(forms.Form):
   bill_id = forms.HiddenInput()
   text = forms.CharField(label='text')
 
-class CommentForm(forms.Form):
+class AnnotationEditForm(AnnotationAddForm):
+  id = forms.HiddenInput()
+
+class CommentAddForm(forms.Form):
   annotation_id = forms.HiddenInput()
   text = forms.CharField(label='text')
+
+class CommentEditForm(CommentAddForm):
+  id = forms.HiddenInput()
