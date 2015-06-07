@@ -21,13 +21,14 @@
       {% endfor %}
     </ul>
 
+    {% else %}
+      <p>you haven't added any bills yet!</p>
+    {% endif %}
+
+    <a class="btn btn-primary addBillButton" href="/addbill/">Add new bill</a>
+
   </div>
 
-  {% else %}
-    <p>you haven't added any bills yet!</p>
-  {% endif %}
-
-  <a class="btn btn-primary" href="/addbill/">Create a new bill</a>
 {% endblock %}
 
 </div>

@@ -16,6 +16,10 @@
 	color: #bbb;
 }
 
+.bill-list a.addBillButton.btn-primary {
+	color: #bbb;
+}
+
 footer {
 	margin: 40px 0 0;
 }
