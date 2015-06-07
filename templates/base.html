@@ -13,8 +13,11 @@
 
 </head>
 <body>
-  {% load staticfiles %}
-  <img src="{% static "logo-blue.png" %}" alt="My image"/>
+
+  <div class="container">
+    {% load staticfiles %}
+    <img id="logo" src="{% static "logo-blue.png" %}" alt="My image"/>
+  </div>
 
   <div class="bs-component">
     <nav class="navbar navbar-default">
@@ -51,10 +54,8 @@
   {% endblock %}
   
   <footer>
-    <div class="row">
-      <div class="col-lg-12">
+    <div class="container">
         <p>An #atxhacks project 2015</p>            
-      </div>
     </div>
   </footer>
 
