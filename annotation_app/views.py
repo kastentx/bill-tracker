@@ -120,3 +120,8 @@ def comment(request, comment_id):
     raise Http404
   context = {'comment': comment}
   return render(request, 'comment.html', context)
+
+# TODO: Implement
+
+def edit_bill(request, bill_id):
+  pass
