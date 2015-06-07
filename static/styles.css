@@ -20,6 +20,10 @@
 	color: #bbb;
 }
 
+.containerAddBill h3 {
+	margin: 30px 0 20px;
+}
+
 footer {
 	margin: 40px 0 0;
 }
