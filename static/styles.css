@@ -17,11 +17,16 @@
 }
 
 .bill-list a.addBillButton.btn-primary {
+	margin: 20px 0 0;
 	color: #bbb;
 }
 
 .containerAddBill h3 {
 	margin: 30px 0 20px;
+}
+
+.container.bill-list nav li {
+	margin: 0 0 20px;
 }
 
 footer {
