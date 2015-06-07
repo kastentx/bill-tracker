@@ -27,11 +27,10 @@ def add_bill(request):
   return render(request, 'addbill.html', {'form': form})
 
 
-
 def get_bill_text(number):
 
   if not number.isalnum():
-    print('error must be a number')
+    None
   # Queries only senate bills in legislative session 84R
   url = "http://www.capitol.state.tx.us/tlodocs/84R/billtext/html/SB000" + number + "I.htm"
   #this suffix changes depending on what stage the bill is at. we could give them an option
@@ -45,12 +44,13 @@ def get_bill_text(number):
   # this is actually a list of sentences
   sentence_list = clean_text.split('.')
   span_text = ""
+  span_id = 0
 
   for sentence in sentence_list:
-
     modified_sentence = sentence.replace('\n',"").replace('\t',"").replace('\xa0',"").replace('\r',"")
-    span = '<span>' + modified_sentence + '</span>'
+    span = '<span id=' + str(span_id) + '>' + modified_sentence + '</span>'
     span_text += span
+    span_id += 1
 
   return span_text
 
