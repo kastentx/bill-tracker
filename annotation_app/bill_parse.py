@@ -67,6 +67,7 @@ class Bill_Import():
             self.issenate = True
         else:
             self.ishouse = True
+
     def pull_billtext(self):
         if self.issenate:
             chamber = 'SB'
@@ -120,19 +121,30 @@ class Bill_Import():
         # Skip last element (it's an empty string anyway)
         subjects_list = subjects_list[:len(subjects_list)-1]
         self.subjects = subjects_list
+
     def set_authors(self):
-        td = self.rawhistory.find('td', {'id': 'cellAuthors'}).getText()
-        self.authors = list(td.split('|'))
+        td = self.rawhistory.find('td', {'id': 'cellAuthors'})
+        if td != None:
+          td = td.getText()
+          self.authors = list(td.split('|'))
 
     def set_coauthors(self):
-        td = self.rawhistory.find('td', {'id': 'cellCoauthors'}).getText()
-        self.coauthors = list(td.split('|'))
+        td = self.rawhistory.find('td', {'id': 'cellCoauthors'})
+        if td != None:
+          td = td.getText()
+          self.coauthors = list(td.split('|'))
+
     def set_sponsors(self):
-        td = self.rawhistory.find('td', {'id': 'cellSponsors'}).getText()
-        self.sponsors = list(td.split('|'))
+        td = self.rawhistory.find('td', {'id': 'cellSponsors'})
+        if td != None:
+          td = td.getText()
+          self.sponsors = list(td.split('|'))
+
     def set_cosponsors(self):
-        td = self.rawhistory.find('td', {'id': 'cellCosponsors'}).getText()
-        self.cosponsors = list(td.split('|'))
+        td = self.rawhistory.find('td', {'id': 'cellCosponsors'})
+        if td != None:
+          td = td.getText()
+          self.cosponsors = list(td.split('|'))
 
 
 

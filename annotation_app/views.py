@@ -35,7 +35,7 @@ def add_bill(request):
       print("Checkpoint2")
       ####
       billsb10 = Bill_Import()
-      billsb10.set_bill_num('10')
+      billsb10.set_bill_num(str(bill.number))
       billsb10.pull_billtext()
       bill_list = billsb10.billtext
       bill.text = Bill.serialize(bill_list)
@@ -62,8 +62,6 @@ def add_bill(request):
       print('coauthors', Bill.deserialize(bill.coauthors))
       print('sponsors', Bill.deserialize(bill.sponsors))
       print('cosponsors', Bill.deserialize(bill.cosponsors))
-
-      ####
 
       bill.save()
       return HttpResponseRedirect('/bills/%d/' % bill.id)
