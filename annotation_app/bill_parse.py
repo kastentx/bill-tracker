@@ -35,6 +35,7 @@ def get_history(chamber, number):
 
 class Bill_Import():
     def __init__(self):
+      #some commit 
         #needs input of str for bill number and a bool for issenate or ishouse
         self.bill_number = str
         self.issenate = True
