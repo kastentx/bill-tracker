@@ -15,6 +15,8 @@ def index(request):
 
 def bill_list(request):
   bill_list = Bill.objects.all()
+  for bill in bill_list:
+    bill.text = text_frontend(bill.text)
   context = {'bill_list': bill_list}
   return render(request, 'bill-list.html', context)
 
@@ -91,6 +93,7 @@ def bill(request, bill_id):
   except Bill.DoesNotExist:
     raise Http404
   annotation_list = Annotation.objects.filter(bill_id=bill)
+  bill.text = text_frontend(bill.text)
   context = {'bill': bill, 'annotation_list': annotation_list}
   return render(request, 'bill.html', context)
 
@@ -146,7 +149,6 @@ def comment(request, comment_id):
   context = {'comment': comment}
   return render(request, 'comment.html', context)
 
-# TODO: Implement
 
 def edit_bill(request, bill_id):
   try:
@@ -172,40 +174,22 @@ def example_client(request):
 from django.core.serializers import serialize
 
 def get_bill(request):
-  print(request.GET)
   bill = Bill()
-  bill.number = request.GET['bill_number']
-  # #bill_txt = get_bill_text(str(bill.number))
-  # #print("Checkpoint2")
-  # #if (bill_txt == None):
-  # #  return Http404
-  # #else:
-  # #  bill.text = bill_txt
-  # #subjects = get_history("SB", str(bill.number))
-  # #bill.subjects = Bill.serialize(subjects)
-  # print("Checkpoint2")
-  # ####
+  bill.number = request.GET['number']
   billsb10 = Bill_Import()
-  billsb10.set_bill_num('10')
+  billsb10.set_bill_num(str(bill.number))
   billsb10.pull_billtext()
   bill_list = billsb10.billtext
   bill.text = Bill.serialize(bill_list)
   # print("Checkpoint3")
   billsb10.pull_history()
   # print("Checkpoint4")
-  billsb10.set_authors()
+  billsb10.set_data()
   bill.authors = Bill.serialize(billsb10.authors)
-  # print("Checkpoint5")
-  billsb10.set_coauthors()
   bill.coauthors = Bill.serialize(billsb10.coauthors)
-  # print("Checkpoint5")
-  billsb10.set_subjects()
   bill.subjects = Bill.serialize(billsb10.subjects)
-  # print("Checkpoint6")
-  billsb10.set_cosponsors()
   bill.cosponsors = Bill.serialize(billsb10.cosponsors)
   # print("Checkpoint7")
-  billsb10.set_sponsors()
   bill.sponsors = Bill.serialize(billsb10.sponsors)
   # print('authors', Bill.deserialize(bill.authors))
   # print('billtext', Bill.deserialize(bill.text))
@@ -216,8 +200,34 @@ def get_bill(request):
 
   # ####
 
-  bill.save()
+#  bill.save()
+  bill.text = text_frontend(bill.text)
   return HttpResponse(serialize('json', [bill]))
 
 def megalith(request):
   return render(request, 'megalith/megalith.html')
+
+import re
+
+def text_frontend(text):
+  output = text
+  output = output.split('", "')[0]
+#  output.replace('["', '')
+
+  if re.search('</span>', output):
+    output = output.replace('</span>', '.</span>').replace('\\',"")
+    output = str(re.sub(r'\{.+\}\s*', '', output))
+    return output
+  else:
+    sentence_list = output.split('.')
+    sentence_list.pop()
+    span_text = ""
+    span_id = 1
+
+    for sentence in sentence_list:
+      modified_sentence = sentence.replace('\n',"").replace('\t',"").replace('\xa0',"").replace('\r',"").replace('\\',"")
+      span = '<span id="' + str(span_id) + '">' + modified_sentence + '.</span>'
+      span_text += span
+      span_id += 1
+
+    return span_text
