@@ -1,0 +1,16 @@
+.annotated {
+  background-color: yellow;
+}
+
+span {
+  border: 1px solid white;
+}
+
+span:hover {
+  border: 1px solid black;
+}
+
+.selected-sentence {
+  color: white;
+  background-color: blue;
+}
