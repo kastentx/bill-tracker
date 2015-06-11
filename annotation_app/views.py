@@ -178,10 +178,11 @@ def megalith(request):
 
 import re
 
+# For the love of god, don't touch this!!!
 def text_frontend(text):
   output = text
   output = output.split('", "')[0]
-#  output.replace('["', '')
+  output = re.sub('\["', '', output)
 
   if re.search('</span>', output):
     output = output.replace('</span>', '.</span>').replace('\\',"")
