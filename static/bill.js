@@ -13,6 +13,5 @@ window.onload = function() {
   //     }
   //   });
   // });
-  // console.log($(".billarea").text())
-  $(".billarea").annotator();
+  var annotator = new Annotator($(".billarea"));
 };
