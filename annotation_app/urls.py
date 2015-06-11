@@ -29,6 +29,5 @@ urlpatterns = [
     url(r'^addcomment/$', views.add_comment, name='add_comment'),
     url(r'^comments/(?P<comment_id>\d+)/$', views.comment, name='comment'),
     url(r'^example-client/$', views.example_client, name='example_client'),
-    url(r'^getbill/$', views.get_bill, name='get_bill'),
     url(r'^megalith/$', views.megalith, name='megalith'),
 ]
