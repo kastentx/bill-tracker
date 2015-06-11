@@ -23,34 +23,32 @@ def bill_list(request):
 def add_bill(request):
   if request.method == 'POST':
     form = BillForm(request.POST)
-    if form.is_valid():
-      print("Checkpoint1")
-      data = form.cleaned_data
-      bill = Bill()
-      bill.number = data['number']
-      billsb10 = Bill_Import()
-      billsb10.set_bill_num(str(bill.number))
-      billsb10.pull_billtext()
-      bill_list = billsb10.billtext
-      bill.text = Bill.serialize(bill_list)
-      print("Checkpoint3")
-      billsb10.pull_history()
-      print("Checkpoint4")
-      billsb10.set_data()
-      bill.authors = Bill.serialize(billsb10.authors)
-      bill.coauthors = Bill.serialize(billsb10.coauthors)
-      bill.subjects = Bill.serialize(billsb10.subjects)
-      bill.cosponsors = Bill.serialize(billsb10.cosponsors)
-      print("Checkpoint7")
-      bill.sponsors = Bill.serialize(billsb10.sponsors)
-      print('authors', Bill.deserialize(bill.authors))
-      #print('billtext', Bill.deserialize(bill.text))
-      print('subjects', Bill.deserialize(bill.subjects))
-      print('coauthors', Bill.deserialize(bill.coauthors))
-      print('sponsors', Bill.deserialize(bill.sponsors))
-      print('cosponsors', Bill.deserialize(bill.cosponsors))
 
-      bill.save()
+    if form.is_valid():
+      data = form.cleaned_data
+      bill_num = data["number"]
+      bill = Bill.objects.filter(number=bill_num)
+      # If you find bill in the database, it is the first element in QuerySet
+      if bill:
+          bill = bill[0]
+      # If bill is not in the database, pull it from TLO website
+      if not bill:
+        data = form.cleaned_data
+        bill = Bill()
+        bill.number = data['number']
+        bill_import = Bill_Import()
+        bill_import.set_bill_num(str(bill.number))
+        bill_import.pull_billtext()
+        bill_list = bill_import.billtext
+        bill.text = Bill.serialize(bill_list)
+        bill_import.pull_history()
+        bill_import.set_data()
+        bill.authors = Bill.serialize(bill_import.authors)
+        bill.coauthors = Bill.serialize(bill_import.coauthors)
+        bill.subjects = Bill.serialize(bill_import.subjects)
+        bill.cosponsors = Bill.serialize(bill_import.cosponsors)
+        bill.sponsors = Bill.serialize(bill_import.sponsors)
+        bill.save()
       return HttpResponseRedirect('/bills/%d/' % bill.id)
   else:
     form = BillForm()
