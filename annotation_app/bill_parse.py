@@ -2,50 +2,18 @@ import re
 import bs4
 import requests
 
-
-def get_history(chamber, number):
-  # TODO temporarily hardcoded
-  chamber = "SB"
-
-  if not number.isalnum():
-    None
-  # Queries only senate bills in legislative session 84R
-  url = "http://www.capitol.state.tx.us/BillLookup/History.aspx?LegSess=84R&Bill=" + chamber + number
-  #this suffix changes depending on what stage the bill is at. we could give them an option
-
-  res = requests.get(url)
-  if not res.status_code == requests.codes.ok:
-    return None
-
-  html = bs4.BeautifulSoup(res.text)
-  td = html.find('td', {'id': 'cellSubjects'}).getText()
-  regex = re.compile(".*?\((.*?)\)")
-  # Find all the strings between (...) - parenthesis
-  result = re.findall(regex, td)
-
-  # Delete the content between the parenthesis
-  for par in result:
-      td = td.replace(par, "")
-
-  subjects_list = td.split("()")
-  # Skip last element (it's an empty string anyway)
-  subjects_list = subjects_list[:len(subjects_list)-1]
-  return subjects_list
-
-
 class Bill_Import():
+
     def __init__(self):
-      #some commit 
-        #needs input of str for bill number and a bool for issenate or ishouse
+        #bool for issenate or ishouse
         self.bill_number = str
-        self.issenate = True
+        self.issenate = True #TODO fix this hard coding. 
         self.ishouse = False
         self.url = {'billurl' : ['http://www.capitol.state.tx.us/tlodocs/84R/billtext/html/','.htm'],
                     'sections' : ["http://www.capitol.state.tx.us/BillLookup/",".aspx?LegSess=84R&Bill="]}
-        self.endchar = ["E", "S", "H", "I", "F"]
+        self.endchar = ["I", "S", "E", "H", "F"] #TODO breaks if bill is introduced house
         self.rawauthors = 'string'
         self.rawhistory = 'string'
-
         #outside vars
         self.billtext = list()
         self.subjects = list()
@@ -54,6 +22,7 @@ class Bill_Import():
         self.cosponsors = list()
         self.sponsors = list()
     def set_bill_num(self, num):
+        num = str(num)
         if not num.isalnum():
             print('error must be a number')
         else:
@@ -84,19 +53,11 @@ class Bill_Import():
                 break
             html = bs4.BeautifulSoup(res.text)
             clean_text = html.get_text()
+            clean_text = clean_text.split()
+            clean_text = ' '.join(clean_text)
+            clean_text = re.sub(r'\{.+\}\s*', '',clean_text)
+            self.billtext.append(clean_text)
 
-              # this is actually a list of sentences
-            sentence_list = clean_text.split('.')
-            span_text = ""
-            span_id = 1
-
-            for sentence in sentence_list:
-              modified_sentence = sentence.replace('\n',"").replace('\t',"").replace('\xa0',"").replace('\r',"")
-              span = '<span id="' + str(span_id) + '">' + modified_sentence + '</span>'
-              span_text += span
-              span_id += 1
-
-            self.billtext.append(span_text)
 
     def pull_history(self):
         if self.issenate:
@@ -105,8 +66,7 @@ class Bill_Import():
             chamber = 'HB'
         path = self.url['sections'][0]+'History'+self.url['sections'][1]+chamber+self.bill_number
         rawhtml = requests.get(path)
-        bhistory = bs4.BeautifulSoup(rawhtml.text)
-        self.rawhistory = bhistory
+        self.rawhistory = bs4.BeautifulSoup(rawhtml.text)
 
     def set_subjects(self):
         td = self.rawhistory.find('td', {'id': 'cellSubjects'}).getText()
@@ -117,35 +77,32 @@ class Bill_Import():
         # Delete the content between the parenthesis
         for par in result:
           td = td.replace(par, "")
-
         subjects_list = td.split("()")
         # Skip last element (it's an empty string anyway)
         subjects_list = subjects_list[:len(subjects_list)-1]
         self.subjects = subjects_list
-
-    def set_authors(self):
-        td = self.rawhistory.find('td', {'id': 'cellAuthors'})
-        if td != None:
-          td = td.getText()
-          self.authors = list(td.split('|'))
-
-    def set_coauthors(self):
-        td = self.rawhistory.find('td', {'id': 'cellCoauthors'})
-        if td != None:
-          td = td.getText()
-          self.coauthors = list(td.split('|'))
-
+    def set_data(self):
+        self.set_author()
+        self.set_coauthor()
+        self.set_sponsors()
+        self.set_cosponsors()
+        
+    def set_author(self):
+        self.authors = self.check_empty('cellAuthors')
+    def set_coauthor(self):
+        self.coauthors = self.check_empty('cellCoauthors')
     def set_sponsors(self):
-        td = self.rawhistory.find('td', {'id': 'cellSponsors'})
-        if td != None:
-          td = td.getText()
-          self.sponsors = list(td.split('|'))
-
+        self.sponsors = self.check_empty('cellSponsors')
     def set_cosponsors(self):
-        td = self.rawhistory.find('td', {'id': 'cellCosponsors'})
-        if td != None:
-          td = td.getText()
-          self.cosponsors = list(td.split('|'))
-
-
-
+        self.cosponsors = self.check_empty('cellCosponsors')
+    
+    def check_empty(self, cellid):
+        #Fixed error where it breaks when there is no text in the field. 
+        
+        if self.rawhistory.find('td',id = cellid) ==  None:
+            print('noneif')
+            return ['']
+        else:
+            self.rawhistory.find('td',id = cellid).getText()
+            text = self.rawhistory.find('td',id = cellid).getText().split('|')
+            return text
