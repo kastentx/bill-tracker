@@ -1,5 +1,5 @@
 $.get('http://localhost:8000/getbill/',
-  { bill_number: 10 },
+  { number: 10 },
   function(data) {
     data = $.parseJSON(data)[0]
     console.log(data);
