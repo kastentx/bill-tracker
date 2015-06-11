@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
+{% block title %}Bill{% endblock %}
+
+{% load staticfiles %}
+
+{% block additional_stylesheets %}
+  <link rel="stylesheet" href="{% static "bill.css" %}">
+{% endblock %}
+
+{% block content %}
 <div class="container">
 <div class="row">
 
-{% block title %}Bill{% endblock %}
-
-{% block content %}
-  
   <div class="page-header">
     <h1 id="navbar">Bill</h1>
   </div>
@@ -51,4 +56,5 @@
 </div>
 </div>
 
+<script src="{% static "bill.js" %}"></script>
 {% endblock %}
