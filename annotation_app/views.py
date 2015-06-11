@@ -173,37 +173,6 @@ def example_client(request):
 
 from django.core.serializers import serialize
 
-def get_bill(request):
-  bill = Bill()
-  bill.number = request.GET['number']
-  billsb10 = Bill_Import()
-  billsb10.set_bill_num(str(bill.number))
-  billsb10.pull_billtext()
-  bill_list = billsb10.billtext
-  bill.text = Bill.serialize(bill_list)
-  # print("Checkpoint3")
-  billsb10.pull_history()
-  # print("Checkpoint4")
-  billsb10.set_data()
-  bill.authors = Bill.serialize(billsb10.authors)
-  bill.coauthors = Bill.serialize(billsb10.coauthors)
-  bill.subjects = Bill.serialize(billsb10.subjects)
-  bill.cosponsors = Bill.serialize(billsb10.cosponsors)
-  # print("Checkpoint7")
-  bill.sponsors = Bill.serialize(billsb10.sponsors)
-  # print('authors', Bill.deserialize(bill.authors))
-  # print('billtext', Bill.deserialize(bill.text))
-  # print('subjects', Bill.deserialize(bill.subjects))
-  # print('coauthors', Bill.deserialize(bill.coauthors))
-  # print('sponsors', Bill.deserialize(bill.sponsors))
-  # print('cosponsors', Bill.deserialize(bill.cosponsors))
-
-  # ####
-
-#  bill.save()
-  bill.text = text_frontend(bill.text)
-  return HttpResponse(serialize('json', [bill]))
-
 def megalith(request):
   return render(request, 'megalith/megalith.html')
 
