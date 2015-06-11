@@ -5,6 +5,7 @@
 {% load staticfiles %}
 
 {% block additional_stylesheets %}
+  <link rel="stylesheet" href="{% static "annotatorjs/annotator.min.css" %}">
   <link rel="stylesheet" href="{% static "bill.css" %}">
 {% endblock %}
 
@@ -40,7 +41,7 @@
       <p>you haven't added any annotations yet!</p>
     {% endif %}
 
-  
+
     <div class="form-group">
       <form action="/addannotation/" method="post" class="form" id="formaddannotation">
         <label for="annotation">Annotation:</label>
@@ -56,5 +57,6 @@
 </div>
 </div>
 
+<script src="{% static "annotatorjs/annotator-full.min.js" %}"></script>
 <script src="{% static "bill.js" %}"></script>
 {% endblock %}
