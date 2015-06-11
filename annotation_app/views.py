@@ -50,8 +50,6 @@ def add_bill(request):
       print('sponsors', Bill.deserialize(bill.sponsors))
       print('cosponsors', Bill.deserialize(bill.cosponsors))
 
-      ####
-
       bill.save()
       return HttpResponseRedirect('/bills/%d/' % bill.id)
   else:
