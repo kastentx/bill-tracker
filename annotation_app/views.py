@@ -1,4 +1,5 @@
 import bs4
+from django.core import serializers
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import requests
@@ -7,7 +8,6 @@ from annotation_app.bill_parse import Bill_Import
 
 from annotation_app.models import Bill, Annotation, Comment
 from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm, BillEditForm
-
 
 
 def index(request):
@@ -49,7 +49,12 @@ def add_bill(request):
         bill.cosponsors = Bill.serialize(bill_import.cosponsors)
         bill.sponsors = Bill.serialize(bill_import.sponsors)
         bill.save()
-      return HttpResponseRedirect('/bills/%d/' % bill.id)
+
+      if 'format' in request.POST:
+        return HttpResponse(serializers.serialize(request.POST['format'],
+          [bill]))
+      else:
+        return HttpResponseRedirect('/bills/%d/' % bill.id)
   else:
     form = BillForm()
   return render(request, 'addbill.html', {'form': form})
@@ -166,8 +171,6 @@ def edit_bill(request, bill_id):
 
 def example_client(request):
   return render(request, 'example.html')
-
-from django.core.serializers import serialize
 
 def megalith(request):
   return render(request, 'megalith/megalith.html')
