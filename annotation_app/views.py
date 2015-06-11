@@ -180,20 +180,21 @@ def text_frontend(text):
   output = output.split('", "')[0]
   output = re.sub('\["', '', output)
 
-  if re.search('</span>', output):
-    output = output.replace('</span>', '.</span>').replace('\\',"")
-    output = str(re.sub(r'\{.+\}\s*', '', output))
-    return output
-  else:
-    sentence_list = output.split('.')
-    sentence_list.pop()
-    span_text = ""
-    span_id = 1
+  # if re.search('</span>', output):
+  #   output = output.replace('</span>', '.</span>').replace('\\',"")
+  #   output = str(re.sub(r'\{.+\}\s*', '', output))
+  #   return output
+  # else:
+  #   sentence_list = output.split('.')
+  #   sentence_list.pop()
+  #   span_text = ""
+  #   span_id = 1
 
-    for sentence in sentence_list:
-      modified_sentence = sentence.replace('\n',"").replace('\t',"").replace('\xa0',"").replace('\r',"").replace('\\',"")
-      span = '<span id="' + str(span_id) + '">' + modified_sentence + '.</span>'
-      span_text += span
-      span_id += 1
+  #   for sentence in sentence_list:
+  #     modified_sentence = sentence.replace('\n',"").replace('\t',"").replace('\xa0',"").replace('\r',"").replace('\\',"")
+  #     span = '<span id="' + str(span_id) + '">' + modified_sentence + '.</span>'
+  #     span_text += span
+  #     span_id += 1
 
-    return span_text
+  #   return span_text
+  return output
