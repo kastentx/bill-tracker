@@ -3,9 +3,8 @@
 {% block title %}Bill{% endblock %}
 
 {% load staticfiles %}
-
-{% block additional_stylesheets %}
-  <link rel="stylesheet" href="{% static "annotatorjs/annotator.min.css" %}">
+{% block page_specific_stylesheets %}
+  <link rel="stylesheet" href="{% static "lib/annotator.min.css" %}">
   <link rel="stylesheet" href="{% static "bill.css" %}">
 {% endblock %}
 
@@ -38,7 +37,7 @@
         {% endfor %}
       </ul>
     {% else %}
-      <p>you haven't added any annotations yet!</p>
+      <!--p>you haven't added any annotations yet!</p-->
     {% endif %}
 
 
@@ -56,10 +55,11 @@
 
 </div>
 </div>
+{% endblock %}
 
-<script src="{% static "jquery-1.10.2.min.js" %}"></script>
-<script src="{% static "jquery.cookie-1.4.1.min.js" %}"></script>
-<script src="{% static "annotatorjs/annotator-full.min.js" %}"></script>
+{% block page_specific_scripts %}
+<script src="{% static "lib/jquery.cookie-1.4.1.min.js" %}"></script>
+<script src="{% static "lib/annotator-full.min.js" %}"></script>
 <script src="{% static "bill.js" %}"></script>
 <script>window.bill_id = {{ bill.id }};</script>
 {% endblock %}

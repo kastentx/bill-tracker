@@ -99,10 +99,9 @@ def bill(request, bill_id):
     bill = Bill.objects.get(id = bill_id)
   except Bill.DoesNotExist:
     raise Http404
-  annotation_list = Annotation.objects.filter(bill_id=bill)
+  # annotation_list = bill.annotation_set.all()
   bill.text = text_frontend(bill.text)
-  context = {'bill': bill, 'annotation_list': annotation_list,
-    'jquery_exists': True}
+  context = {'bill': bill}#, 'annotation_list': annotation_list}
   return render(request, 'bill.html', context)
 
 def get_bill_list(request):
@@ -143,7 +142,6 @@ def add_annotation(request):
   raise Http404
 
 def annotations(request):
-  print(request.method, 'annotations')
   if request.method == 'GET':
     bill_id = re.search(r'bills/(?P<bill_id>\d+)/$',
       request.META['HTTP_REFERER']).group(1)
@@ -193,7 +191,6 @@ def annotations(request):
 # 'text': 'Clinton'}
 
 def annotation(request, annotation_id):
-  print(request.method, 'annotation/' + annotation_id)
   if request.method == 'PUT':
     input_data = json.loads(request.body.decode("utf-8"))
     input_data['tags'] = json.dumps(input_data['tags'])
