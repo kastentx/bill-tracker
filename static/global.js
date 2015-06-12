@@ -10,11 +10,21 @@ $('.navbar-collapse a').click(function(e){
 
 	var searchTerm = clickedLink.text().toLowerCase();
 	console.log('run ajax for ' + searchTerm + ' here.');
-
 	lis.removeClass('active');
 	clickedLi.addClass('active');
 
 	e.preventDefault();
+
+    switch (searchTerm) {
+        case "content": window.location = "/bills";
+             break;
+        case "subject": window.location = "/subjects";
+             break;
+        case "author": window.location = "/authors";
+             break;
+        default: break;
+    }
+
 
 });
 

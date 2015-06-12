@@ -20,6 +20,8 @@ urlpatterns = [
     url(r'^index/$', views.index),
     url(r'^$', views.bill_list, name='bill_list'),
     url(r'^bills/$', views.bill_list, name='bills'),
+    url(r'^authors/$', views.author_list, name='authors'),
+    url(r'^subjects/$', views.subject_list, name='subjects'),
     url(r'^addbill/$', views.add_bill, name='add_bill'),
     url(r'^bills/(?P<bill_id>\d+)/$', views.bill, name='bill'),
     url(r'^bills/(?P<bill_id>\d+)/edit/$', views.edit_bill, name='edit_bill'),
@@ -35,5 +37,8 @@ urlpatterns = [
     url(r'^annotations/$', views.annotations, name='annotations'),
     url(r'^annotations/(?P<annotation_id>\d+)/$', views.annotation,
       name='annotation'),
-    url(r'get_bill_list/$', views.get_bill_list, name='get_bill_list')
+    url(r'get_bill_list/$', views.get_bill_list, name='get_bill_list'),
+    url(r'get_subject_list/$', views.get_subject_list, name='get_subject_list'),
+    url(r'get_author_list/$', views.get_author_list, name='get_author_list'),
+
 ]
