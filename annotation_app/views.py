@@ -55,6 +55,8 @@ def add_bill(request):
         bill.sponsors = Bill.serialize(bill_import.sponsors)
         bill.save()
 
+        save_authors(bill, bill_import.authors)
+
       if 'format' in request.POST:
         return HttpResponse(serializers.serialize(request.POST['format'],
           [bill]))
@@ -63,6 +65,17 @@ def add_bill(request):
   else:
     form = BillForm()
   return render(request, 'addbill.html', {'form': form})
+
+def save_authors(bill, authors):
+
+  for author in authors:
+      senator = Senator()
+      senator.name = author
+      senator.committee = "comittee" # TODO fix hardcode
+      senator.is_chair = False # TODO fix hardcode
+      senator.save()
+      # Associated this senator with imported bill
+      senator.bills.add(bill)
 
 
 def get_bill_text(number):
