@@ -1,5 +1,5 @@
 from django.db import models
-from flask import json
+import json
 
 
 class Bill(models.Model):
