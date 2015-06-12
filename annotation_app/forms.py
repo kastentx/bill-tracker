@@ -10,8 +10,14 @@ class BillEditForm(BillAddForm):
   id = forms.HiddenInput()
 
 class AnnotationAddForm(forms.Form):
-  bill_id = forms.HiddenInput()
+  bill = forms.HiddenInput()
   text = forms.CharField(label='text')
+  quote = forms.CharField(label='quote')
+
+  ranges_start_offset = forms.IntegerField(label='ranges_start_offset')
+  ranges_end_offset = forms.IntegerField(label='ranges_end_offset')
+
+  tags = forms.CharField(label='tags')
 
 class AnnotationEditForm(AnnotationAddForm):
   id = forms.HiddenInput()

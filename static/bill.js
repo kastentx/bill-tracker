@@ -14,23 +14,26 @@ window.onload = function() {
   //   });
   // });
 
-  // using jQuery
-  function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-      var cookies = document.cookie.split(';');
-      for (var i = 0; i < cookies.length; i++) {
-        var cookie = $.trim(cookies[i]);
-        // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) == (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-  var csrftoken = getCookie('csrftoken');
+  // Please keep this section below in case a future version of jQuery makes
+  // jQuery cookie plugin cease functioning:
+
+  // function getCookie(name) {
+  //   var cookieValue = null;
+  //   if (document.cookie && document.cookie != '') {
+  //     var cookies = document.cookie.split(';');
+  //     for (var i = 0; i < cookies.length; i++) {
+  //       var cookie = $.trim(cookies[i]);
+  //       // Does this cookie string begin with the name we want?
+  //       if (cookie.substring(0, name.length + 1) == (name + '=')) {
+  //         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   return cookieValue;
+  // }
+  // var csrftoken = getCookie('csrftoken');
+  var csrftoken = $.cookie('csrftoken');
   // console.log(csrftoken);
 
   function csrfSafeMethod(method) {
@@ -45,9 +48,10 @@ window.onload = function() {
     }
   });
 
-  var annotator = new Annotator($(".billarea"));
+  // var billarea = new Annotator($(".billarea"));
+  var billarea = $(".billarea").annotator();
 
-  annotator.addPlugin('Store', {
+  billarea.annotator('addPlugin', 'Store', {
     // The endpoint of the store on your server.
     prefix: '/annotations',
 
@@ -62,6 +66,7 @@ window.onload = function() {
 
     // Attach the uri of the current page to all annotations to allow search.
     annotationData: {
+      'bill_id': window.bill_id,
       // 'uri': 'http://this/document/only',
     },
 
@@ -74,5 +79,7 @@ window.onload = function() {
     // }
   });
 
-  annotator.addPlugin('Tags')
+  // FYI: Tags are space-separated, not comma-separated
+  // (Learned that from experience)
+  billarea.annotator('addPlugin', 'Tags')
 };
