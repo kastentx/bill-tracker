@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 import requests
 from annotation_app.bill_parse import Bill_Import
+from django.core import serializers
  #get_history,
 
 from annotation_app.models import Bill, Annotation, Comment
@@ -101,6 +102,13 @@ def bill(request, bill_id):
   context = {'bill': bill, 'annotation_list': annotation_list,
     'jquery_exists': True}
   return render(request, 'bill.html', context)
+
+def get_bill_list(request):
+  #TODO to optimize
+  data = serializers.serialize("json", Bill.objects.all())
+  print(data)
+  return HttpResponse(data)
+
 
 # def add_annotation(request):
 #   if request.method == 'POST':
