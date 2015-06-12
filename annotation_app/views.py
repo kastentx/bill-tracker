@@ -2,6 +2,7 @@ import bs4
 from django.core import serializers
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
 import requests
 from annotation_app.bill_parse import Bill_Import
  #get_history,
@@ -88,6 +89,7 @@ def get_bill_text(number):
   return span_text
 
 
+@ensure_csrf_cookie
 def bill(request, bill_id):
   try:
     bill = Bill.objects.get(id = bill_id)
@@ -98,31 +100,41 @@ def bill(request, bill_id):
   context = {'bill': bill, 'annotation_list': annotation_list}
   return render(request, 'bill.html', context)
 
-def add_annotation(request):
-  if request.method == 'POST':
-    if 'add_for' in request.POST:
-      form = AnnotationAddForm()
-      return render(request, 'addannotation.html',
-        {'form': form, 'bill_id': request.POST['add_for']})
-    else:
-      form = AnnotationAddForm(request.POST)
-      if form.is_valid():
-        data = form.cleaned_data
-        r = Annotation()
-        r.bill_id = Bill.objects.get(id = request.POST['bill_id'])
-        r.text = data['text']
-        r.save()
-        return HttpResponseRedirect('/annotations/%d/' % r.id)
-  raise Http404
+# def add_annotation(request):
+#   if request.method == 'POST':
+#     if 'add_for' in request.POST:
+#       form = AnnotationAddForm()
+#       return render(request, 'addannotation.html',
+#         {'form': form, 'bill_id': request.POST['add_for']})
+#     else:
+#       form = AnnotationAddForm(request.POST)
+#       if form.is_valid():
+#         data = form.cleaned_data
+#         r = Annotation()
+#         r.bill_id = Bill.objects.get(id = request.POST['bill_id'])
+#         r.text = data['text']
+#         r.save()
+#         return HttpResponseRedirect('/annotations/%d/' % r.id)
+#   raise Http404
+
+def annotations(request):
+  print(request.method, 'annotations')
+  if request.method == 'GET':
+    print(request.GET)
+  elif request.method == 'POST':
+    print(request.POST)
+
+  HttpResponse("[]")
 
 def annotation(request, annotation_id):
-  try:
-    annotation = Annotation.objects.get(id = annotation_id)
-  except Annotation.DoesNotExist:
-    raise Http404
-  comment_list = Comment.objects.filter(annotation_id=annotation)
-  context = {'annotation': annotation, 'comment_list': comment_list}
-  return render(request, 'annotation.html', context)
+  print(request.method, 'annotation/' + annotation_id)
+  # try:
+  #   annotation = Annotation.objects.get(id = annotation_id)
+  # except Annotation.DoesNotExist:
+  #   raise Http404
+  # comment_list = Comment.objects.filter(annotation_id=annotation)
+  # context = {'annotation': annotation, 'comment_list': comment_list}
+  # return render(request, 'annotation.html', context)
 
 def add_comment(request):
   if request.method == 'POST':
@@ -169,6 +181,7 @@ def edit_bill(request, bill_id):
   return render(request, 'billform.html',
     {'form': form, 'method': 'edit', 'id': bill.id})
 
+@ensure_csrf_cookie
 def example_client(request):
   return render(request, 'example.html')
 
