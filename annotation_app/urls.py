@@ -30,5 +30,10 @@ urlpatterns = [
     url(r'^comments/(?P<comment_id>\d+)/$', views.comment, name='comment'),
     url(r'^example-client/$', views.example_client, name='example_client'),
     url(r'^megalith/$', views.megalith, name='megalith'),
+
+    # For Annotation.js
+    url(r'^annotations/$', views.annotations, name='annotations'),
+    url(r'^annotations/(?P<annotation_id>\d+)/$', views.annotation,
+      name='annotation'),
     url(r'get_bill_list/$', views.get_bill_list, name='get_bill_list')
 ]

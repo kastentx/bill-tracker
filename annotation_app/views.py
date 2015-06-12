@@ -1,14 +1,16 @@
 import bs4
+from django.core import serializers
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
 import requests
 from annotation_app.bill_parse import Bill_Import
 from django.core import serializers
  #get_history,
 
 from annotation_app.models import Bill, Annotation, Comment
-from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm, BillEditForm
-
+from annotation_app.forms import AnnotationAddForm, AnnotationEditForm, CommentAddForm, BillForm, BillEditForm
+import json
 
 
 def index(request):
@@ -50,7 +52,12 @@ def add_bill(request):
         bill.cosponsors = Bill.serialize(bill_import.cosponsors)
         bill.sponsors = Bill.serialize(bill_import.sponsors)
         bill.save()
-      return HttpResponseRedirect('/bills/%d/' % bill.id)
+
+      if 'format' in request.POST:
+        return HttpResponse(serializers.serialize(request.POST['format'],
+          [bill]))
+      else:
+        return HttpResponseRedirect('/bills/%d/' % bill.id)
   else:
     form = BillForm()
   return render(request, 'addbill.html', {'form': form})
@@ -84,6 +91,7 @@ def get_bill_text(number):
   return span_text
 
 
+@ensure_csrf_cookie
 def bill(request, bill_id):
   try:
     bill = Bill.objects.get(id = bill_id)
@@ -91,45 +99,124 @@ def bill(request, bill_id):
     raise Http404
   annotation_list = Annotation.objects.filter(bill_id=bill)
   bill.text = text_frontend(bill.text)
-  context = {'bill': bill, 'annotation_list': annotation_list}
+  context = {'bill': bill, 'annotation_list': annotation_list,
+    'jquery_exists': True}
   return render(request, 'bill.html', context)
 
 def get_bill_list(request):
-  #TODO temporarily hardcoded
+  #TODO to optimize
   data = serializers.serialize("json", Bill.objects.all())
-  #bills = Bill.objects.all()
-  #bills_list = map(Bill.serialize, bills)
-  #result = { "bills": bills }
-  #bills = Bill.serialize(bills)
   print(data)
   return HttpResponse(data)
 
 
-def add_annotation(request):
-  if request.method == 'POST':
-    if 'add_for' in request.POST:
-      form = AnnotationAddForm()
-      return render(request, 'addannotation.html',
-        {'form': form, 'bill_id': request.POST['add_for']})
+# def add_annotation(request):
+#   if request.method == 'POST':
+#     if 'add_for' in request.POST:
+#       form = AnnotationAddForm()
+#       return render(request, 'addannotation.html',
+#         {'form': form, 'bill_id': request.POST['add_for']})
+#     else:
+#       form = AnnotationAddForm(request.POST)
+#       if form.is_valid():
+#         data = form.cleaned_data
+#         r = Annotation()
+#         r.bill_id = Bill.objects.get(id = request.POST['bill_id'])
+#         r.text = data['text']
+#         r.save()
+#         return HttpResponseRedirect('/annotations/%d/' % r.id)
+#   raise Http404
+
+def annotations(request):
+  print(request.method, 'annotations')
+  if request.method == 'GET':
+    bill_id = re.search(r'bills/(?P<bill_id>\d+)/$',
+      request.META['HTTP_REFERER']).group(1)
+    bill = Bill.objects.get(id = bill_id)
+    annotations = bill.annotation_set.all()
+    annotation_list = []
+    for annotation in annotations:
+      data = {}
+      data['id'] = annotation.id
+      data['text'] = annotation.text
+      data['quote'] = annotation.quote
+      data['ranges'] = [{
+        'startOffset': annotation.ranges_start_offset,
+        'endOffset': annotation.ranges_end_offset,
+        'start': '',
+        'end': ''
+      }]
+      data['tags'] = json.loads(annotation.tags)
+      annotation_list.append(data)
+    return HttpResponse(json.dumps(annotation_list))
+
+  elif request.method == 'POST':
+    input_data = json.loads(request.body.decode("utf-8"))
+    input_data['tags'] = json.dumps(input_data['tags'])
+    input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
+    input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
+    form = AnnotationAddForm(input_data)
+
+    if form.is_valid():
+      data = form.cleaned_data
+      annotation = Annotation()
+      bill = Bill.objects.get(id = input_data['bill_id'])
+      annotation.bill = bill
+      annotation.text = data['text']
+      annotation.quote = data['quote']
+      annotation.ranges_start_offset = data['ranges_start_offset']
+      annotation.ranges_end_offset = data['ranges_end_offset']
+      annotation.tags = data['tags']
+      annotation.save()
+
+      return HttpResponse('{"id":'+ str(annotation.id) +'}')
     else:
-      form = AnnotationAddForm(request.POST)
-      if form.is_valid():
-        data = form.cleaned_data
-        r = Annotation()
-        r.bill_id = Bill.objects.get(id = request.POST['bill_id'])
-        r.text = data['text']
-        r.save()
-        return HttpResponseRedirect('/annotations/%d/' % r.id)
-  raise Http404
+      return HttpResponse(status=400)
+
+# {'bill_id': 14, 'tags': ['President'], 'ranges': [{'start': '',
+# 'startOffset': 40, 'endOffset': 44, 'end': ''}], 'quote': 'Bill',
+# 'text': 'Clinton'}
 
 def annotation(request, annotation_id):
-  try:
-    annotation = Annotation.objects.get(id = annotation_id)
-  except Annotation.DoesNotExist:
-    raise Http404
-  comment_list = Comment.objects.filter(annotation_id=annotation)
-  context = {'annotation': annotation, 'comment_list': comment_list}
-  return render(request, 'annotation.html', context)
+  print(request.method, 'annotation/' + annotation_id)
+  if request.method == 'PUT':
+    input_data = json.loads(request.body.decode("utf-8"))
+    input_data['tags'] = json.dumps(input_data['tags'])
+    input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
+    input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
+    form = AnnotationEditForm(input_data)
+
+    if form.is_valid():
+      data = form.cleaned_data
+      annotation = Annotation.objects.get(id = annotation_id)
+      bill = Bill.objects.get(id = input_data['bill_id'])
+      annotation.bill = bill
+      annotation.text = data['text']
+      annotation.quote = data['quote']
+      annotation.ranges_start_offset = data['ranges_start_offset']
+      annotation.ranges_end_offset = data['ranges_end_offset']
+      annotation.tags = data['tags']
+      annotation.save()
+
+      return HttpResponse("{}")
+    else:
+      return HttpResponse(status=400)
+
+  elif request.method == 'DELETE':
+    try:
+      annotation = Annotation.objects.get(id = annotation_id)
+    except Annotation.DoesNotExist:
+      raise Http404
+
+    annotation.delete()
+    return HttpResponse("{}")
+  # try:
+  #   annotation = Annotation.objects.get(id = annotation_id)
+  # except Annotation.DoesNotExist:
+  #   raise Http404
+  # comment_list = Comment.objects.filter(annotation_id=annotation)
+  # context = {'annotation': annotation, 'comment_list': comment_list}
+  # return render(request, 'annotation.html', context)
 
 def add_comment(request):
   if request.method == 'POST':
@@ -176,10 +263,9 @@ def edit_bill(request, bill_id):
   return render(request, 'billform.html',
     {'form': form, 'method': 'edit', 'id': bill.id})
 
+@ensure_csrf_cookie
 def example_client(request):
   return render(request, 'example.html')
-
-from django.core.serializers import serialize
 
 def megalith(request):
   return render(request, 'megalith/megalith.html')
@@ -192,20 +278,21 @@ def text_frontend(text):
   output = output.split('", "')[0]
   output = re.sub('\["', '', output)
 
-  if re.search('</span>', output):
-    output = output.replace('</span>', '.</span>').replace('\\',"")
-    output = str(re.sub(r'\{.+\}\s*', '', output))
-    return output
-  else:
-    sentence_list = output.split('.')
-    sentence_list.pop()
-    span_text = ""
-    span_id = 1
+  # if re.search('</span>', output):
+  #   output = output.replace('</span>', '.</span>').replace('\\',"")
+  #   output = str(re.sub(r'\{.+\}\s*', '', output))
+  #   return output
+  # else:
+  #   sentence_list = output.split('.')
+  #   sentence_list.pop()
+  #   span_text = ""
+  #   span_id = 1
 
-    for sentence in sentence_list:
-      modified_sentence = sentence.replace('\n',"").replace('\t',"").replace('\xa0',"").replace('\r',"").replace('\\',"")
-      span = '<span id="' + str(span_id) + '">' + modified_sentence + '.</span>'
-      span_text += span
-      span_id += 1
+  #   for sentence in sentence_list:
+  #     modified_sentence = sentence.replace('\n',"").replace('\t',"").replace('\xa0',"").replace('\r',"").replace('\\',"")
+  #     span = '<span id="' + str(span_id) + '">' + modified_sentence + '.</span>'
+  #     span_text += span
+  #     span_id += 1
 
-    return span_text
+  #   return span_text
+  return output
