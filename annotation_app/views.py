@@ -8,7 +8,7 @@ from annotation_app.bill_parse import Bill_Import
  #get_history,
 
 from annotation_app.models import Bill, Annotation, Comment
-from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm, BillEditForm
+from annotation_app.forms import AnnotationAddForm, AnnotationEditForm, CommentAddForm, BillForm, BillEditForm
 import json
 
 
@@ -148,6 +148,7 @@ def annotations(request):
     input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
     input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
     form = AnnotationAddForm(input_data)
+
     if form.is_valid():
       data = form.cleaned_data
       annotation = Annotation()
@@ -160,9 +161,7 @@ def annotations(request):
       annotation.tags = data['tags']
       annotation.save()
 
-      data['tags'] = json.loads(request.body.decode("utf-8"))['tags']
-      data['id'] = annotation.id
-      return HttpResponse(json.dumps(data))
+      return HttpResponse('{"id":'+ str(annotation.id) +'}')
     else:
       return HttpResponse(status=400)
 
@@ -172,6 +171,37 @@ def annotations(request):
 
 def annotation(request, annotation_id):
   print(request.method, 'annotation/' + annotation_id)
+  if request.method == 'PUT':
+    input_data = json.loads(request.body.decode("utf-8"))
+    input_data['tags'] = json.dumps(input_data['tags'])
+    input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
+    input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
+    form = AnnotationEditForm(input_data)
+
+    if form.is_valid():
+      data = form.cleaned_data
+      annotation = Annotation.objects.get(id = annotation_id)
+      bill = Bill.objects.get(id = input_data['bill_id'])
+      annotation.bill = bill
+      annotation.text = data['text']
+      annotation.quote = data['quote']
+      annotation.ranges_start_offset = data['ranges_start_offset']
+      annotation.ranges_end_offset = data['ranges_end_offset']
+      annotation.tags = data['tags']
+      annotation.save()
+
+      return HttpResponse("{}")
+    else:
+      return HttpResponse(status=400)
+
+  elif request.method == 'DELETE':
+    try:
+      annotation = Annotation.objects.get(id = annotation_id)
+    except Annotation.DoesNotExist:
+      raise Http404
+
+    annotation.delete()
+    return HttpResponse("{}")
   # try:
   #   annotation = Annotation.objects.get(id = annotation_id)
   # except Annotation.DoesNotExist:
