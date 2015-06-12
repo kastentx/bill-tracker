@@ -3,6 +3,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import requests
 from annotation_app.bill_parse import Bill_Import
+from django.core import serializers
  #get_history,
 
 from annotation_app.models import Bill, Annotation, Comment
@@ -92,6 +93,17 @@ def bill(request, bill_id):
   bill.text = text_frontend(bill.text)
   context = {'bill': bill, 'annotation_list': annotation_list}
   return render(request, 'bill.html', context)
+
+def get_bill_list(request):
+  #TODO temporarily hardcoded
+  data = serializers.serialize("json", Bill.objects.all())
+  #bills = Bill.objects.all()
+  #bills_list = map(Bill.serialize, bills)
+  #result = { "bills": bills }
+  #bills = Bill.serialize(bills)
+  print(data)
+  return HttpResponse(data)
+
 
 def add_annotation(request):
   if request.method == 'POST':

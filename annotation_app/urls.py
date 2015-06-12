@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^comments/(?P<comment_id>\d+)/$', views.comment, name='comment'),
     url(r'^example-client/$', views.example_client, name='example_client'),
     url(r'^megalith/$', views.megalith, name='megalith'),
+    url(r'get_bill_list/$', views.get_bill_list, name='get_bill_list')
 ]
