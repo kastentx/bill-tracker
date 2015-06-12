@@ -28,6 +28,9 @@ class Senator(models.Model):
   is_chair = models.BooleanField()
   bills = models.ManyToManyField(Bill)
 
+class Subject(models.Model):
+  name = models.CharField(max_length=255)
+  bills = models.ManyToManyField(Bill)
 
 
 class Annotation(models.Model):
