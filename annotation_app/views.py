@@ -8,7 +8,7 @@ from annotation_app.bill_parse import Bill_Import
 from django.core import serializers
  #get_history,
 
-from annotation_app.models import Bill, Annotation, Comment
+from annotation_app.models import Bill, Annotation, Comment, Senator
 from annotation_app.forms import AnnotationAddForm, AnnotationEditForm, CommentAddForm, BillForm, BillEditForm
 import json
 
@@ -17,11 +17,13 @@ def index(request):
   return render(request, 'base.html')
 
 def bill_list(request):
-  bill_list = Bill.objects.all()
-  for bill in bill_list:
-    bill.text = text_frontend(bill.text)
-  context = {'bill_list': bill_list}
-  return render(request, 'bill-list.html', context)
+  return render(request, 'bill-list.html')
+
+def subject_list(request):
+  return render(request, 'subject-list.html')
+
+def author_list(request):
+  return render(request, 'author-list.html')
 
 def add_bill(request):
   if request.method == 'POST':
@@ -109,23 +111,36 @@ def get_bill_list(request):
   print(data)
   return HttpResponse(data)
 
+def get_subject_list(request):
+  #TODO Add subject model
+  #data = serializers.serialize("json", Senator.objects.all())
+  data = []
+  #print(data)
+  return HttpResponse(data)
 
-# def add_annotation(request):
-#   if request.method == 'POST':
-#     if 'add_for' in request.POST:
-#       form = AnnotationAddForm()
-#       return render(request, 'addannotation.html',
-#         {'form': form, 'bill_id': request.POST['add_for']})
-#     else:
-#       form = AnnotationAddForm(request.POST)
-#       if form.is_valid():
-#         data = form.cleaned_data
-#         r = Annotation()
-#         r.bill_id = Bill.objects.get(id = request.POST['bill_id'])
-#         r.text = data['text']
-#         r.save()
-#         return HttpResponseRedirect('/annotations/%d/' % r.id)
-#   raise Http404
+def get_author_list(request):
+  #TODO to optimize
+  data = serializers.serialize("json", Senator.objects.all())
+  print(data)
+  return HttpResponse(data)
+
+
+def add_annotation(request):
+  if request.method == 'POST':
+    if 'add_for' in request.POST:
+      form = AnnotationAddForm()
+      return render(request, 'addannotation.html',
+        {'form': form, 'bill_id': request.POST['add_for']})
+    else:
+      form = AnnotationAddForm(request.POST)
+      if form.is_valid():
+        data = form.cleaned_data
+        r = Annotation()
+        r.bill_id = Bill.objects.get(id = request.POST['bill_id'])
+        r.text = data['text']
+        r.save()
+        return HttpResponseRedirect('/annotations/%d/' % r.id)
+  raise Http404
 
 def annotations(request):
   print(request.method, 'annotations')

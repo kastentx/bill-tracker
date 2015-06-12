@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+<div class="row">
+<div class="col-lg-8">
+
+  <div class="page-header">
+    <h1 id="navbar">Author List</h1>
+  </div>
+
+  <div class="container bill-list" ng-controller="AuthorListController">
+    {% verbatim %}
+    <ul class="nav nav-pills nav-stacked" ng-repeat="author in authors | filter:query">
+
+        <li class="active" >
+          {{  author.name }}
+        </li>
+
+    </ul>
+
+    {% endverbatim %}
+  </div>
+
+</div>
+</div>
+</div>
+{% endblock %}

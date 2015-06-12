@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+<div class="row">
+<div class="col-lg-8">
+
+  <div class="page-header">
+    <h1 id="navbar">Bill List</h1>
+  </div>
+
+  <div class="container bill-list" ng-controller="BillsListController">
+
+    <ul class="nav nav-pills nav-stacked" ng-repeat="bill in bills">
+
+        <li class="active" ><a href="/bills/{{ bill.id }}/">
+          {{ bill.text|slice:":1000"|safe }}
+        </a></li>
+
+    </ul>
+
+    <a class="btn btn-primary addBillButton" href="/addbill/">Add new bill</a>
+
+  </div>
+
+</div>
+</div>
+</div>
+{% endblock %}
