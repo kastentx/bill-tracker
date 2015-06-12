@@ -8,7 +8,7 @@ from annotation_app.bill_parse import Bill_Import
 from django.core import serializers
  #get_history,
 
-from annotation_app.models import Bill, Annotation, Comment, Senator
+from annotation_app.models import Bill, Annotation, Comment, Senator, Subject
 from annotation_app.forms import AnnotationAddForm, AnnotationEditForm, CommentAddForm, BillForm, BillEditForm
 import json
 
@@ -56,6 +56,7 @@ def add_bill(request):
         bill.save()
 
         save_authors(bill, bill_import.authors)
+        save_subjects(bill, bill_import.subjects)
 
       if 'format' in request.POST:
         return HttpResponse(serializers.serialize(request.POST['format'],
@@ -77,6 +78,14 @@ def save_authors(bill, authors):
       # Associated this senator with imported bill
       senator.bills.add(bill)
 
+def save_subjects(bill, subjects):
+
+  for subject_name in subjects:
+      subject = Subject()
+      subject.name = subject_name
+      subject.save()
+      # Associated this senator with imported bill
+      subject.bills.add(bill)
 
 def get_bill_text(number):
 
@@ -118,20 +127,19 @@ def bill(request, bill_id):
   return render(request, 'bill.html', context)
 
 def get_bill_list(request):
-  #TODO to optimize
+  #TODO optimize
   data = serializers.serialize("json", Bill.objects.all())
   print(data)
   return HttpResponse(data)
 
 def get_subject_list(request):
-  #TODO Add subject model
-  #data = serializers.serialize("json", Senator.objects.all())
-  data = []
-  #print(data)
+  #TODO optimize
+  data = serializers.serialize("json", Subject.objects.all())
+  print(data)
   return HttpResponse(data)
 
 def get_author_list(request):
-  #TODO to optimize
+  #TODO optimize
   data = serializers.serialize("json", Senator.objects.all())
   print(data)
   return HttpResponse(data)

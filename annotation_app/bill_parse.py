@@ -80,12 +80,14 @@ class Bill_Import():
         subjects_list = td.split("()")
         # Skip last element (it's an empty string anyway)
         subjects_list = subjects_list[:len(subjects_list)-1]
+
         self.subjects = subjects_list
     def set_data(self):
         self.set_author()
         self.set_coauthor()
         self.set_sponsors()
         self.set_cosponsors()
+        self.set_subjects()
         
     def set_author(self):
         self.authors = self.check_empty('cellAuthors')
