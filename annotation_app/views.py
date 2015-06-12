@@ -9,6 +9,7 @@ from annotation_app.bill_parse import Bill_Import
 
 from annotation_app.models import Bill, Annotation, Comment
 from annotation_app.forms import AnnotationAddForm, CommentAddForm, BillForm, BillEditForm
+import json
 
 
 def index(request):
@@ -97,7 +98,8 @@ def bill(request, bill_id):
     raise Http404
   annotation_list = Annotation.objects.filter(bill_id=bill)
   bill.text = text_frontend(bill.text)
-  context = {'bill': bill, 'annotation_list': annotation_list}
+  context = {'bill': bill, 'annotation_list': annotation_list,
+    'jquery_exists': True}
   return render(request, 'bill.html', context)
 
 # def add_annotation(request):
@@ -120,11 +122,53 @@ def bill(request, bill_id):
 def annotations(request):
   print(request.method, 'annotations')
   if request.method == 'GET':
-    print(request.GET)
-  elif request.method == 'POST':
-    print(request.POST)
+    bill_id = re.search(r'bills/(?P<bill_id>\d+)/$',
+      request.META['HTTP_REFERER']).group(1)
+    bill = Bill.objects.get(id = bill_id)
+    annotations = bill.annotation_set.all()
+    annotation_list = []
+    for annotation in annotations:
+      data = {}
+      data['id'] = annotation.id
+      data['text'] = annotation.text
+      data['quote'] = annotation.quote
+      data['ranges'] = [{
+        'startOffset': annotation.ranges_start_offset,
+        'endOffset': annotation.ranges_end_offset,
+        'start': '',
+        'end': ''
+      }]
+      data['tags'] = json.loads(annotation.tags)
+      annotation_list.append(data)
+    return HttpResponse(json.dumps(annotation_list))
 
-  HttpResponse("[]")
+  elif request.method == 'POST':
+    input_data = json.loads(request.body.decode("utf-8"))
+    input_data['tags'] = json.dumps(input_data['tags'])
+    input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
+    input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
+    form = AnnotationAddForm(input_data)
+    if form.is_valid():
+      data = form.cleaned_data
+      annotation = Annotation()
+      bill = Bill.objects.get(id = input_data['bill_id'])
+      annotation.bill = bill
+      annotation.text = data['text']
+      annotation.quote = data['quote']
+      annotation.ranges_start_offset = data['ranges_start_offset']
+      annotation.ranges_end_offset = data['ranges_end_offset']
+      annotation.tags = data['tags']
+      annotation.save()
+
+      data['tags'] = json.loads(request.body.decode("utf-8"))['tags']
+      data['id'] = annotation.id
+      return HttpResponse(json.dumps(data))
+    else:
+      return HttpResponse(status=400)
+
+# {'bill_id': 14, 'tags': ['President'], 'ranges': [{'start': '',
+# 'startOffset': 40, 'endOffset': 44, 'end': ''}], 'quote': 'Bill',
+# 'text': 'Clinton'}
 
 def annotation(request, annotation_id):
   print(request.method, 'annotation/' + annotation_id)

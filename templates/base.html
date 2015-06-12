@@ -67,7 +67,9 @@
     </div>
   </footer>
 
+  {% if not jquery_exists %}
   <script src="{% static "jquery-1.10.2.min.js" %}"></script>
+  {% endif %}
   <script src="{% static "bootstrap.min.js" %}"></script>
   <script language="javascript" type="text/javascript" src="{% static "global.js" %}"></script>
   <!-- <script src="{% static "bootswatch.js" %}"></script> -->

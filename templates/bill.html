@@ -58,7 +58,8 @@
 </div>
 
 <script src="{% static "jquery-1.10.2.min.js" %}"></script>
-<script src="{% static "bootstrap.min.js" %}"></script>
+<script src="{% static "jquery.cookie-1.4.1.min.js" %}"></script>
 <script src="{% static "annotatorjs/annotator-full.min.js" %}"></script>
 <script src="{% static "bill.js" %}"></script>
+<script>window.bill_id = {{ bill.id }};</script>
 {% endblock %}
