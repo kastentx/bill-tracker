@@ -4,8 +4,9 @@
 
 {% load staticfiles %}
 {% block page_specific_stylesheets %}
-  <link rel="stylesheet" href="{% static "lib/annotator.min.css" %}">
+  <link rel="stylesheet" href="{% static "annotatorjs/annotator.min.css" %}">
   <link rel="stylesheet" href="{% static "bill.css" %}">
+  <link rel="stylesheet" href="{% static "./annotatorjs/src/css/style.css" %}">
 {% endblock %}
 
 {% block content %}
@@ -58,8 +59,24 @@
 {% endblock %}
 
 {% block page_specific_scripts %}
+<!-- jQuery cookie plugin -->
 <script src="{% static "lib/jquery.cookie-1.4.1.min.js" %}"></script>
-<script src="{% static "lib/annotator-full.min.js" %}"></script>
+<!-- Annotator JS -->
+<script src="{% static "annotatorjs/annotator-full.min.js" %}"></script>
+<!-- Annotator Plugins -->
+<script src="{% static "annotatorjs/src/view_annotator.js" %}"></script>
+<script src="{% static "annotatorjs/src/categories.js" %}"></script>
+<script src="{% static "annotatorjs/lib/tinymce/tinymce.min.js" %}"></script>
+<script src="{% static "annotatorjs/src/richEditor.js" %}"></script>
+<!-- Locale for language -->
+<script src="{% static "jquery.i18n.min.js" %}"></script>
+<!-- For show the annotation creation date -->
+<script src="{% static "annotatorjs/lib/jquery.dateFormat.js" %}"></script>
+<!-- File with the translations -->
+<script src="{% static "annotatorjs/locale/en/annotator.js" %}"></script>
+<!-- Scroll panel -->
+<script src="{% static "annotatorjs/lib/jquery.slimscroll.js" %}"></script>
+<!-- Static JS File -->
 <script src="{% static "bill.js" %}"></script>
 <script>window.bill_id = {{ bill.id }};</script>
 {% endblock %}
