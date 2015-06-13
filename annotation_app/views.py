@@ -166,9 +166,14 @@ def annotations(request):
     bill = Bill.objects.get(id = bill_id)
     annotations = bill.annotation_set.all()
     annotation_list = []
+    counter = 1
     for annotation in annotations:
       data = {}
       data['id'] = annotation.id
+      data['user'] = annotation.user or 'demoUser'
+      created = annotation.created
+      data['data_creacio'] = unix_time(created) if created else counter
+      counter += 1000
       data['text'] = annotation.text
       data['quote'] = annotation.quote
       data['ranges'] = [{
@@ -177,7 +182,14 @@ def annotations(request):
         'start': '',
         'end': ''
       }]
-      data['tags'] = json.loads(annotation.tags)
+      data['tags'] = json.loads(annotation.tags) if annotation.tags else []
+      read_perm = annotation.permissions_read
+      data['permissions'] = {
+        'read': json.loads(read_perm) if read_perm else [data['user']],
+        'update': [data['user']],
+        'delete': [data['user']],
+        'admin': [data['user']]
+      }
       annotation_list.append(data)
     return HttpResponse(json.dumps(annotation_list))
 
@@ -186,11 +198,14 @@ def annotations(request):
     input_data['tags'] = json.dumps(input_data['tags'])
     input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
     input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
+    input_data['permissions_read'] = \
+      json.dumps(input_data['permissions']['read'])
     form = AnnotationAddForm(input_data)
 
     if form.is_valid():
       data = form.cleaned_data
       annotation = Annotation()
+      annotation.user = data['user']
       bill = Bill.objects.get(id = input_data['bill_id'])
       annotation.bill = bill
       annotation.text = data['text']
@@ -198,15 +213,18 @@ def annotations(request):
       annotation.ranges_start_offset = data['ranges_start_offset']
       annotation.ranges_end_offset = data['ranges_end_offset']
       annotation.tags = data['tags']
+      annotation.permissions_read = data['permissions_read']
       annotation.save()
 
       return HttpResponse('{"id":'+ str(annotation.id) +'}')
     else:
       return HttpResponse(status=400)
 
-# {'bill_id': 14, 'tags': ['President'], 'ranges': [{'start': '',
-# 'startOffset': 40, 'endOffset': 44, 'end': ''}], 'quote': 'Bill',
-# 'text': 'Clinton'}
+# {'quote': 'BILL', 'text': 'Clinton', 'permissions': {'delete': ['demoUser'],
+# 'read': [], 'update': ['demoUser'], 'admin': ['demoUser']},
+# 'user': 'demoUser', 'data_creacio': 1434156917763, 'ranges':
+# [{'endOffset': 83, 'end': '', 'startOffset': 79, 'start': ''}],
+# 'tags': ['Former', 'president'], 'bill_id': 1, 'id': 1434156917830}
 
 def annotation(request, annotation_id):
   if request.method == 'PUT':
@@ -214,11 +232,14 @@ def annotation(request, annotation_id):
     input_data['tags'] = json.dumps(input_data['tags'])
     input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
     input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
+    input_data['permissions_read'] = \
+      json.dumps(input_data['permissions']['read'])
     form = AnnotationEditForm(input_data)
 
     if form.is_valid():
       data = form.cleaned_data
       annotation = Annotation.objects.get(id = annotation_id)
+      annotation.user = data['user']
       bill = Bill.objects.get(id = input_data['bill_id'])
       annotation.bill = bill
       annotation.text = data['text']
@@ -226,6 +247,7 @@ def annotation(request, annotation_id):
       annotation.ranges_start_offset = data['ranges_start_offset']
       annotation.ranges_end_offset = data['ranges_end_offset']
       annotation.tags = data['tags']
+      annotation.permissions_read = data['permissions_read']
       annotation.save()
 
       return HttpResponse("{}")
@@ -326,3 +348,12 @@ def text_frontend(text):
 
   #   return span_text
   return output
+
+## Helper methods
+
+import datetime
+def unix_time(dt):
+  naive = dt.replace(tzinfo=None)
+  epoch = datetime.datetime.utcfromtimestamp(0)
+  delta = naive - epoch
+  return int(delta.total_seconds() * 1000)

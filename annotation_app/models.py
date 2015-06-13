@@ -34,10 +34,11 @@ class Subject(models.Model):
 
 
 class Annotation(models.Model):
+  user = models.CharField(max_length=255, default="demoUser")
   bill = models.ForeignKey(Bill)
   # sentence_id = models.PositiveIntegerField(null=True)
 
-  # created = models.DateTimeField(auto_now_add=True)
+  created = models.DateTimeField(auto_now_add=True, null=True)
   # updated = models.DateTimeField(auto_now=True)
   text = models.TextField(null=True)
   quote = models.TextField(null=True)
@@ -48,7 +49,9 @@ class Annotation(models.Model):
   ranges_start_offset = models.IntegerField(null=True)
   ranges_end_offset = models.IntegerField(null=True)
 
-  tags = models.TextField(null=True)
+  tags = models.TextField(default="[]")
+
+  permissions_read = models.CharField(max_length=255, null=True)
 
 # JSON:
 # {
@@ -81,4 +84,3 @@ class Annotation(models.Model):
 class Comment(models.Model):
   annotation = models.ForeignKey(Annotation)
   text = models.TextField()
-  
