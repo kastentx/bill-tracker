@@ -1,4 +1,8 @@
-var billTracker = angular.module("bill-tracker", []);
+var billTracker = angular.module("bill-tracker", []).config(function($httpProvider) {
+    // http://django-angular.readthedocs.org/en/latest/csrf-protection.html
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+});
 
     billTracker.controller("BillsListController", function($scope, $http) {
 
@@ -42,5 +46,20 @@ var billTracker = angular.module("bill-tracker", []);
             }
             console.log(subject_list);
             $scope.subjects = subject_list;
+        });
+    });
+
+    billTracker.controller("BillsByAuthorController", function($scope, $window, $http) {
+
+        // Retrieve bills authored by author with specified id
+        $http.get("/get_author_bills", {params: {id: $window.author_id}}).success(function(data) {
+
+            var bills_list = [];
+            for (index = 0; index < data.length; index++) {
+                bills_list.push(data[index]["fields"]);
+                bills_list[index]["id"] = data[index]["pk"];
+            }
+            console.log(bills_list);
+            $scope.bills = bills_list;
         });
     });

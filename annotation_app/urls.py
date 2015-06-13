@@ -20,14 +20,22 @@ urlpatterns = [
     url(r'^index/$', views.index),
     url(r'^$', views.bill_list, name='bill_list'),
     url(r'^bills/$', views.bill_list, name='bills'),
-    url(r'^authors/$', views.author_list, name='authors'),
-    url(r'^subjects/$', views.subject_list, name='subjects'),
-    url(r'^addbill/$', views.add_bill, name='add_bill'),
+    url(r'get_bill_list/$', views.get_bill_list, name='get_bill_list'),
     url(r'^bills/(?P<bill_id>\d+)/$', views.bill, name='bill'),
     url(r'^bills/(?P<bill_id>\d+)/edit/$', views.edit_bill, name='edit_bill'),
+    url(r'^authors/$', views.author_list, name='authors'),
+    url(r'get_author_list/$', views.get_author_list, name='get_author_list'),
+    url(r'get_author_bills/$', views.get_author_bills, name='get_author_bills'),
+    url(r'^authors/(?P<author_id>\d+)/$', views.author, name='author'),
+    url(r'^subjects/$', views.subject_list, name='subjects'),
+    url(r'get_subject_list/$', views.get_subject_list, name='get_subject_list'),
+    url(r'^addbill/$', views.add_bill, name='add_bill'),
+
     url(r'^addannotation/$', views.add_annotation, name='add_annotation'),
     url(r'^annotations/(?P<annotation_id>\d+)/$', views.annotation,
       name='annotation'),
+
+
     url(r'^addcomment/$', views.add_comment, name='add_comment'),
     url(r'^comments/(?P<comment_id>\d+)/$', views.comment, name='comment'),
     url(r'^example-client/$', views.example_client, name='example_client'),
@@ -37,8 +45,6 @@ urlpatterns = [
     url(r'^annotations/$', views.annotations, name='annotations'),
     url(r'^annotations/(?P<annotation_id>\d+)/$', views.annotation,
       name='annotation'),
-    url(r'get_bill_list/$', views.get_bill_list, name='get_bill_list'),
-    url(r'get_subject_list/$', views.get_subject_list, name='get_subject_list'),
-    url(r'get_author_list/$', views.get_author_list, name='get_author_list'),
+
 
 ]
