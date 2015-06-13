@@ -68,7 +68,7 @@ def add_bill(request):
   return render(request, 'addbill.html', {'form': form})
 
 def save_authors(bill, authors):
-
+  #TODO fix duplicate authors
   for author in authors:
       senator = Senator.objects.filter(name=author)
       # If this senator is not in the db, add her/him
@@ -83,7 +83,7 @@ def save_authors(bill, authors):
         senator.save()
 
 def save_subjects(bill, subjects):
-
+  #TODO fix duplicate subjects
   for subject_name in subjects:
     subject = Subject.objects.filter(name=subject_name)
     # If this subject is not in the db, add her/him
@@ -145,6 +145,15 @@ def author(request, author_id):
   context = {'author': author}
   return render(request, 'author.html', context)
 
+@ensure_csrf_cookie
+def subject(request, subject_id):
+  try:
+    subject = Subject.objects.get(id = subject_id)
+  except Subject.DoesNotExist:
+    raise Http404
+  context = {'subject': subject}
+  return render(request, 'subject.html', context)
+
 def get_bill_list(request):
   #TODO optimize
   data = serializers.serialize("json", Bill.objects.all())
@@ -167,6 +176,15 @@ def get_author_bills(request):
   author_id = request.GET.get("id")
   #TODO optimize
   data = Senator.objects.get(id=author_id).bills.all()
+  print(data)
+  data = serializers.serialize("json", data)
+  print(data)
+  return HttpResponse(data)
+
+def get_subject_bills(request):
+  subject_id = request.GET.get("id")
+  #TODO optimize
+  data = Subject.objects.get(id=subject_id).bills.all()
   print(data)
   data = serializers.serialize("json", data)
   print(data)

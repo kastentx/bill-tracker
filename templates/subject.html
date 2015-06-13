@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Subject{% endblock %}
+
+{% load staticfiles %}
+{% block page_specific_stylesheets %}
+  <link rel="stylesheet" href="{% static "annotatorjs/annotator.min.css" %}">
+  <link rel="stylesheet" href="{% static "bill.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="row">
+
+  <div class="page-header">
+    <h1 id="navbar">Subject</h1>
+  </div>
+
+  Name: </br>
+  <div class="col-xs-8 billarea">
+    {{ subject.name }}
+  </div>
+  </br></br>
+
+  <div class="container bill-list" ng-controller="BillsBySubjectController">
+    {% verbatim %}
+    <ul class="nav nav-pills nav-stacked" ng-repeat="bill in bills | filter:query">
+
+        <li class="active" ><a href="/bills/{{ bill.id }}/">
+          {{  bill.text.substring(0,1000) }}
+        </a></li>
+
+    </ul>
+
+    {% endverbatim %}
+  </div>
+
+</div>
+</div>
+{% endblock %}
+{% block page_specific_scripts %}
+<script>window.subject_id = {{ subject.id }};</script>
+{% endblock %}
+

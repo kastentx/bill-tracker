@@ -63,3 +63,18 @@ var billTracker = angular.module("bill-tracker", []).config(function($httpProvid
             $scope.bills = bills_list;
         });
     });
+
+    billTracker.controller("BillsBySubjectController", function($scope, $window, $http) {
+
+        // Retrieve bills about specified subject
+        $http.get("/get_subject_bills", {params: {id: $window.subject_id}}).success(function(data) {
+
+            var bills_list = [];
+            for (index = 0; index < data.length; index++) {
+                bills_list.push(data[index]["fields"]);
+                bills_list[index]["id"] = data[index]["pk"];
+            }
+            console.log(bills_list);
+            $scope.bills = bills_list;
+        });
+    });

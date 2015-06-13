@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^authors/(?P<author_id>\d+)/$', views.author, name='author'),
     url(r'^subjects/$', views.subject_list, name='subjects'),
     url(r'get_subject_list/$', views.get_subject_list, name='get_subject_list'),
+    url(r'get_subject_bills/$', views.get_subject_bills, name='get_subject_bills'),
+    url(r'^subjects/(?P<subject_id>\d+)/$', views.subject, name='subject'),
     url(r'^addbill/$', views.add_bill, name='add_bill'),
 
     url(r'^addannotation/$', views.add_annotation, name='add_annotation'),
