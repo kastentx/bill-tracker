@@ -17,6 +17,23 @@
     <h1 id="navbar">Bill</h1>
   </div>
 
+  <div>
+     Authors: </br>
+     {% for author in authors %}
+        {{ author }} </br>
+     {% endfor %}
+     </br>
+  </div>
+
+  <div>
+     Subjects: </br>
+     {% for subject in subjects %}
+        {{ subject }} </br>
+     {% endfor %}
+     </br>
+  </div>
+
+
   <div class="col-xs-8 billarea">
     {{ bill.text|safe }}
   </div>

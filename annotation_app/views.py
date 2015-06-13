@@ -55,6 +55,9 @@ def add_bill(request):
         bill.sponsors = Bill.serialize(bill_import.sponsors)
         bill.save()
 
+        save_authors(bill, bill_import.authors)
+        save_subjects(bill, bill_import.subjects)
+
       if 'format' in request.POST:
         return HttpResponse(serializers.serialize(request.POST['format'],
           [bill]))
@@ -67,22 +70,30 @@ def add_bill(request):
 def save_authors(bill, authors):
 
   for author in authors:
-      senator = Senator()
-      senator.name = author
-      senator.committee = "comittee" # TODO fix hardcode
-      senator.is_chair = False # TODO fix hardcode
-      senator.save()
-      # Associated this senator with imported bill
-      senator.bills.add(bill)
+      senator = Senator.objects.filter(name=author)
+      # If this senator is not in the db, add her/him
+      if not senator:
+        senator = Senator()
+        senator.name = author
+        senator.committee = "comittee" # TODO fix hardcode
+        senator.is_chair = False # TODO fix hardcode
+        senator.save()
+        # Associate this senator with imported bill
+        senator.bills.add(bill)
+        senator.save()
 
 def save_subjects(bill, subjects):
 
   for subject_name in subjects:
+    subject = Subject.objects.filter(name=subject_name)
+    # If this subject is not in the db, add her/him
+    if not subject:
       subject = Subject()
       subject.name = subject_name
       subject.save()
-      # Associated this senator with imported bill
+      # Associate this subject with imported bill
       subject.bills.add(bill)
+      subject.save()
 
 def get_bill_text(number):
 
@@ -120,8 +131,19 @@ def bill(request, bill_id):
     raise Http404
   # annotation_list = bill.annotation_set.all()
   bill.text = text_frontend(bill.text)
-  context = {'bill': bill}#, 'annotation_list': annotation_list}
+  authors = Bill.deserialize(bill.authors)
+  subjects = Bill.deserialize(bill.subjects)
+  context = {'bill': bill, 'authors': authors, 'subjects': subjects }#, 'annotation_list': annotation_list}
   return render(request, 'bill.html', context)
+
+@ensure_csrf_cookie
+def author(request, author_id):
+  try:
+    author = Senator.objects.get(id = author_id)
+  except Senator.DoesNotExist:
+    raise Http404
+  context = {'author': author}
+  return render(request, 'author.html', context)
 
 def get_bill_list(request):
   #TODO optimize
@@ -138,6 +160,15 @@ def get_subject_list(request):
 def get_author_list(request):
   #TODO optimize
   data = serializers.serialize("json", Senator.objects.all())
+  print(data)
+  return HttpResponse(data)
+
+def get_author_bills(request):
+  author_id = request.GET.get("id")
+  #TODO optimize
+  data = Senator.objects.get(id=author_id).bills.all()
+  print(data)
+  data = serializers.serialize("json", data)
   print(data)
   return HttpResponse(data)
 

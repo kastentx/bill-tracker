@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Author{% endblock %}
+
+{% load staticfiles %}
+{% block page_specific_stylesheets %}
+  <link rel="stylesheet" href="{% static "annotatorjs/annotator.min.css" %}">
+  <link rel="stylesheet" href="{% static "bill.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="row">
+
+  <div class="page-header">
+    <h1 id="navbar">Author</h1>
+  </div>
+
+  Name: </br>
+  <div class="col-xs-8 billarea">
+    {{ author.name }}
+  </div>
+  </br></br>
+
+  Committee: </br>
+  <div class="col-xs-8">
+    {{ author.committee }}
+  </div>
+  </br></br>
+
+  <div class="container bill-list" ng-controller="BillsByAuthorController">
+    {% verbatim %}
+    <ul class="nav nav-pills nav-stacked" ng-repeat="bill in bills | filter:query">
+
+        <li class="active" ><a href="/bills/{{ bill.id }}/">
+          {{  bill.text.substring(0,1000) }}
+        </a></li>
+
+    </ul>
+
+    {% endverbatim %}
+  </div>
+
+</div>
+</div>
+{% endblock %}
+{% block page_specific_scripts %}
+<script>window.author_id = {{ author.id }};</script>
+{% endblock %}
+
