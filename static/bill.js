@@ -50,6 +50,19 @@ window.onload = function() {
 
   // var billarea = new Annotator($(".billarea"));
   var billarea = $(".billarea").annotator();
+  var propietary = 'demoUser'
+  billarea.annotator('addPlugin', 'Permissions', {
+  user: propietary,
+  permissions: {
+      'read': [propietary],
+      'update': [propietary],
+      'delete': [propietary],
+      'admin': [propietary]
+  },
+  showViewPermissionsCheckbox: true,
+  showEditPermissionsCheckbox: false
+  });
+  $('.billarea').annotator().annotator('addPlugin', 'AnnotatorViewer');
 
   billarea.annotator('addPlugin', 'Store', {
     // The endpoint of the store on your server.
