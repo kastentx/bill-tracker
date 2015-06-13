@@ -13,9 +13,9 @@
     {% verbatim %}
     <ul class="nav nav-pills nav-stacked" ng-repeat="subject in subjects | filter:query">
 
-        <li class="active" >
+        <li class="active" ><a href="/subjects/{{ subject.id }}/">
           {{  subject.name }}
-        </li>
+        </a></li>
 
     </ul>
     {% endverbatim %}
