@@ -11,7 +11,7 @@
 
   <div class="container bill-list" ng-controller="BillsListController">
     {% verbatim %}
-    <ul class="nav nav-pills nav-stacked" ng-repeat="bill in bills | filter:query">
+    <ul class="nav nav-pills nav-stacked" ng-repeat="bill in bills | filter:query" ng-cloak>
 
         <li class="active" ><a href="/bills/{{ bill.id }}/">
           {{  bill.text.substring(0,1000) }}
