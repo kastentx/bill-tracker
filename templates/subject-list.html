@@ -11,7 +11,7 @@
 
   <div class="container bill-list" ng-controller="SubjectListController">
     {% verbatim %}
-    <ul class="nav nav-pills nav-stacked" ng-repeat="subject in subjects | filter:query">
+    <ul class="nav nav-pills nav-stacked" ng-repeat="subject in subjects | filter:query" ng-cloak>
 
         <li class="active" ><a href="/subjects/{{ subject.id }}/">
           {{  subject.name }}
