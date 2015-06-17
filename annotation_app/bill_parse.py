@@ -1,7 +1,7 @@
 import re
 import bs4
 import requests
-
+import htmllogic
 class Bill_Import():
 
     def __init__(self):
@@ -57,6 +57,7 @@ class Bill_Import():
             clean_text = ' '.join(clean_text)
             clean_text = re.sub(r'\{.+\}\s*', '',clean_text)
             self.billtext.append(clean_text)
+            self.billtext[-1] = htmllogic.htmltext(self.billtext[-1])
 
 
     def pull_history(self):
