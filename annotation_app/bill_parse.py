@@ -51,12 +51,7 @@ class Bill_Import():
             if not res.status_code == requests.codes.ok:
                 print('not a vaild bill!')
                 break
-            html = bs4.BeautifulSoup(res.text)
-            clean_text = html.get_text()
-            clean_text = clean_text.split()
-            clean_text = ' '.join(clean_text)
-            clean_text = re.sub(r'\{.+\}\s*', '',clean_text)
-            self.billtext.append(clean_text)
+            self.billtext.append(res.text)
             self.billtext[-1] = htmllogic.htmltext(self.billtext[-1])
 
 
