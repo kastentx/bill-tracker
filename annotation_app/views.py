@@ -378,6 +378,8 @@ def text_frontend(text):
   output = text
   output = output.split('", "')[0]
   output = re.sub('\["', '', output)
+  output = output.replace(r'\u00a0', '&nbsp;').replace(r'\n', '')\
+    .replace(r'\"', '"')
 
   # if re.search('</span>', output):
   #   output = output.replace('</span>', '.</span>').replace('\\',"")
