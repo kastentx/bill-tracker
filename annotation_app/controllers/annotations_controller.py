@@ -9,11 +9,11 @@ def annotations(request):
     return all(request)
 
   elif request.method == 'POST':
-    return create(request)
+    return create_update(request)
 
 def annotation(request, annotation_id):
   if request.method == 'PUT':
-    return update(request, annotation_id)
+    return create_update(request, annotation_id)
 
   elif request.method == 'DELETE':
     return delete(annotation_id)
@@ -63,18 +63,21 @@ def all(request):
     annotation_list.append(data)
   return HttpResponse(json.dumps(annotation_list))
 
-def create(request):
+def create_update(request, annotation_id=None):
   input_data = json.loads(request.body.decode("utf-8"))
   input_data['tags'] = json.dumps(input_data['tags'])
   input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
   input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
-  input_data['permissions_read'] = \
-    json.dumps(input_data['permissions']['read'])
-  form = AnnotationAddForm(input_data)
+  input_data['permissions_read'] = json.dumps(input_data['permissions']['read'])
+
+  form = AnnotationEditForm(input_data) if annotation_id else \
+    AnnotationAddForm(input_data)
 
   if form.is_valid():
     data = form.cleaned_data
-    annotation = Annotation()
+
+    annotation = Annotation.objects.get(id = annotation_id) if annotation_id \
+      else Annotation()
     annotation.user = data['user']
     bill = Bill.objects.get(id = input_data['bill_id'])
     annotation.bill = bill
@@ -86,34 +89,8 @@ def create(request):
     annotation.permissions_read = data['permissions_read']
     annotation.save()
 
-    return HttpResponse('{"id":'+ str(annotation.id) +'}')
-  else:
-    return HttpResponse(status=400)
-
-def update(request, annotation_id):
-  input_data = json.loads(request.body.decode("utf-8"))
-  input_data['tags'] = json.dumps(input_data['tags'])
-  input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
-  input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
-  input_data['permissions_read'] = \
-    json.dumps(input_data['permissions']['read'])
-  form = AnnotationEditForm(input_data)
-
-  if form.is_valid():
-    data = form.cleaned_data
-    annotation = Annotation.objects.get(id = annotation_id)
-    annotation.user = data['user']
-    bill = Bill.objects.get(id = input_data['bill_id'])
-    annotation.bill = bill
-    annotation.text = data['text']
-    annotation.quote = data['quote']
-    annotation.ranges_start_offset = data['ranges_start_offset']
-    annotation.ranges_end_offset = data['ranges_end_offset']
-    annotation.tags = data['tags']
-    annotation.permissions_read = data['permissions_read']
-    annotation.save()
-
-    return HttpResponse("{}")
+    return HttpResponse("{}") if annotation_id else \
+      HttpResponse('{"id":'+ str(annotation.id) +'}')
   else:
     return HttpResponse(status=400)
 
