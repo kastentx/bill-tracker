@@ -26,16 +26,8 @@ class AnnotationEditForm(AnnotationAddForm):
   id = forms.HiddenInput()
 
 class CommentAddForm(forms.Form):
-  annotation_id = forms.HiddenInput()
+  annotation = forms.HiddenInput()
   text = forms.CharField(label='text')
 
 class CommentEditForm(CommentAddForm):
   id = forms.HiddenInput()
-
-# Deprecated
-
-class AnnotationForm(AnnotationAddForm):
-  pass
-
-class CommentForm(CommentAddForm):
-  pass

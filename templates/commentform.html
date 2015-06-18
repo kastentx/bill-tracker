@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if method == 'add' %}
+  Add Comment
+  {% elif method == 'edit' %}
+  Edit Comment
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% if method == 'add' %}
+  <h1>Add a New Comment</h1>
+  {% elif method == 'edit' %}
+  <h1>Edit Comment</h1>
+  {% endif %}
+
+
+  {% if method == 'add' %}
+  <form action="/addcomment/" method="post" class="form">
+  {% elif method == 'edit' %}
+  <form action="/comments/{{ id }}/edit/" method="post" class="form">
+  {% endif %}
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if method == 'add' %}
+    <input type="submit" value="Add Comment" />
+    {% elif method == 'edit' %}
+    <input type="submit" value="Update Comment" />
+    {% endif %}
+  </form>
+{% endblock %}

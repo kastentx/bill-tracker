@@ -8,13 +8,13 @@ from annotation_app.bill_parse import Bill_Import
 from django.core import serializers
  #get_history,
 
-from annotation_app.models import Bill, Annotation, Comment, Senator, Subject
-from annotation_app.forms import AnnotationAddForm, AnnotationEditForm, CommentAddForm, BillForm, BillEditForm
+from annotation_app.models import Bill, Senator, Subject
+from annotation_app.forms import BillForm
 import json
 
-
-def index(request):
-  return render(request, 'base.html')
+# Deprecated
+# def index(request):
+#   return render(request, 'base.html')
 
 def bill_list(request):
   return render(request, 'bill-list.html')
@@ -191,196 +191,14 @@ def get_subject_bills(request):
   return HttpResponse(data)
 
 
-def add_annotation(request):
-  if request.method == 'POST':
-    if 'add_for' in request.POST:
-      form = AnnotationAddForm()
-      return render(request, 'addannotation.html',
-        {'form': form, 'bill_id': request.POST['add_for']})
-    else:
-      form = AnnotationAddForm(request.POST)
-      if form.is_valid():
-        data = form.cleaned_data
-        r = Annotation()
-        r.bill_id = Bill.objects.get(id = request.POST['bill_id'])
-        r.text = data['text']
-        r.save()
-        return HttpResponseRedirect('/annotations/%d/' % r.id)
-  raise Http404
-
-def annotations(request):
-  if request.method == 'GET':
-    bill_id = re.search(r'bills/(?P<bill_id>\d+)/$',
-      request.META['HTTP_REFERER']).group(1)
-    bill = Bill.objects.get(id = bill_id)
-    annotations = bill.annotation_set.all()
-    annotation_list = []
-    counter = 1
-    for annotation in annotations:
-      data = {}
-      data['id'] = annotation.id
-      data['user'] = annotation.user or 'demoUser'
-      created = annotation.created
-      data['data_creacio'] = unix_time(created) if created else counter
-      counter += 1000
-      data['text'] = annotation.text
-      data['quote'] = annotation.quote
-      data['ranges'] = [{
-        'startOffset': annotation.ranges_start_offset,
-        'endOffset': annotation.ranges_end_offset,
-        'start': '',
-        'end': ''
-      }]
-      data['tags'] = json.loads(annotation.tags) if annotation.tags else []
-      read_perm = annotation.permissions_read
-      data['permissions'] = {
-        'read': json.loads(read_perm) if read_perm else [data['user']],
-        'update': [data['user']],
-        'delete': [data['user']],
-        'admin': [data['user']]
-      }
-      annotation_list.append(data)
-    return HttpResponse(json.dumps(annotation_list))
-
-  elif request.method == 'POST':
-    input_data = json.loads(request.body.decode("utf-8"))
-    input_data['tags'] = json.dumps(input_data['tags'])
-    input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
-    input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
-    input_data['permissions_read'] = \
-      json.dumps(input_data['permissions']['read'])
-    form = AnnotationAddForm(input_data)
-
-    if form.is_valid():
-      data = form.cleaned_data
-      annotation = Annotation()
-      annotation.user = data['user']
-      bill = Bill.objects.get(id = input_data['bill_id'])
-      annotation.bill = bill
-      annotation.text = data['text']
-      annotation.quote = data['quote']
-      annotation.ranges_start_offset = data['ranges_start_offset']
-      annotation.ranges_end_offset = data['ranges_end_offset']
-      annotation.tags = data['tags']
-      annotation.permissions_read = data['permissions_read']
-      annotation.save()
-
-      return HttpResponse('{"id":'+ str(annotation.id) +'}')
-    else:
-      return HttpResponse(status=400)
-
-# {'quote': 'BILL', 'text': 'Clinton', 'permissions': {'delete': ['demoUser'],
-# 'read': [], 'update': ['demoUser'], 'admin': ['demoUser']},
-# 'user': 'demoUser', 'data_creacio': 1434156917763, 'ranges':
-# [{'endOffset': 83, 'end': '', 'startOffset': 79, 'start': ''}],
-# 'tags': ['Former', 'president'], 'bill_id': 1, 'id': 1434156917830}
-
-def annotation(request, annotation_id):
-  if request.method == 'PUT':
-    input_data = json.loads(request.body.decode("utf-8"))
-    input_data['tags'] = json.dumps(input_data['tags'])
-    input_data['ranges_start_offset'] = input_data['ranges'][0]['startOffset']
-    input_data['ranges_end_offset'] = input_data['ranges'][0]['endOffset']
-    input_data['permissions_read'] = \
-      json.dumps(input_data['permissions']['read'])
-    form = AnnotationEditForm(input_data)
-
-    if form.is_valid():
-      data = form.cleaned_data
-      annotation = Annotation.objects.get(id = annotation_id)
-      annotation.user = data['user']
-      bill = Bill.objects.get(id = input_data['bill_id'])
-      annotation.bill = bill
-      annotation.text = data['text']
-      annotation.quote = data['quote']
-      annotation.ranges_start_offset = data['ranges_start_offset']
-      annotation.ranges_end_offset = data['ranges_end_offset']
-      annotation.tags = data['tags']
-      annotation.permissions_read = data['permissions_read']
-      annotation.save()
-
-      return HttpResponse("{}")
-    else:
-      return HttpResponse(status=400)
-
-  elif request.method == 'DELETE':
-    try:
-      annotation = Annotation.objects.get(id = annotation_id)
-    except Annotation.DoesNotExist:
-      raise Http404
-
-    annotation.delete()
-    return HttpResponse("{}")
-  # try:
-  #   annotation = Annotation.objects.get(id = annotation_id)
-  # except Annotation.DoesNotExist:
-  #   raise Http404
-  # comment_list = Comment.objects.filter(annotation_id=annotation)
-  # context = {'annotation': annotation, 'comment_list': comment_list}
-  # return render(request, 'annotation.html', context)
-
-def add_comment(request):
-  if request.method == 'POST':
-    if 'add_for' in request.POST:
-      form = CommentAddForm()
-      return render(request, 'addcomment.html',
-        {'form': form, 'annotation_id': request.POST['add_for']})
-    else:
-      form = CommentAddForm(request.POST)
-      if form.is_valid():
-        data = form.cleaned_data
-        r = Comment()
-        r.annotation_id = Annotation.objects.get(id =
-          request.POST['annotation_id'])
-        r.text = data['text']
-        r.save()
-        return HttpResponseRedirect('/comments/%d/' % r.id)
-  raise Http404
-
-def comment(request, comment_id):
-  try:
-    comment = Comment.objects.get(id = comment_id)
-  except Comment.DoesNotExist:
-    raise Http404
-  context = {'comment': comment}
-  return render(request, 'comment.html', context)
-
-
-def edit_bill(request, bill_id):
-  try:
-    bill = Bill.objects.get(id = bill_id)
-  except Bill.DoesNotExist:
-    raise Http404
-
-  if request.method == 'POST':
-    form = BillEditForm(request.POST)
-    if form.is_valid():
-      data = form.cleaned_data
-      bill.text = data['text']
-      bill.save()
-      return HttpResponseRedirect('/bills/%d/' % bill.id)
-  else:
-    form = BillEditForm(initial={'id': bill.id, 'text': bill.text})
-  return render(request, 'billform.html',
-    {'form': form, 'method': 'edit', 'id': bill.id})
-
-@ensure_csrf_cookie
-def example_client(request):
-  return render(request, 'example.html')
-
-def megalith(request):
-  return render(request, 'megalith/megalith.html')
-
 import re
 
-# For the love of god, don't touch this!!!
+# For the love of Linus, don't touch this!!!
 def text_frontend(text):
-  output = text
-  output = output.split('", "')[-1]
-  # output = re.sub('^\["', '', output)
-  output = re.sub('"\]$', '', output)
+  output = json.loads(text)[-1]
   output = output.replace(r'\u00a0', '&nbsp;').replace(r'\n', '')\
-    .replace(r'\"', '"')
+    .replace(r'\"', '"')#.replace('</center>', '</div>')\
+    #.replace('<center>', '<div style="text-align:center;">')
 
   # if re.search('</span>', output):
   #   output = output.replace('</span>', '.</span>').replace('\\',"")
@@ -400,12 +218,3 @@ def text_frontend(text):
 
   #   return span_text
   return output
-
-## Helper methods
-
-import datetime
-def unix_time(dt):
-  naive = dt.replace(tzinfo=None)
-  epoch = datetime.datetime.utcfromtimestamp(0)
-  delta = naive - epoch
-  return int(delta.total_seconds() * 1000)
