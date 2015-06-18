@@ -376,8 +376,9 @@ import re
 # For the love of god, don't touch this!!!
 def text_frontend(text):
   output = text
-  output = output.split('", "')[0]
-  output = re.sub('\["', '', output)
+  output = output.split('", "')[-1]
+  # output = re.sub('^\["', '', output)
+  output = re.sub('"\]$', '', output)
   output = output.replace(r'\u00a0', '&nbsp;').replace(r'\n', '')\
     .replace(r'\"', '"')
 
