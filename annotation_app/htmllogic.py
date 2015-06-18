@@ -122,4 +122,4 @@ def htmltext(text):
     ttobj.add_tags('tr')
     #consolidate tag diff sib tr
     ttobj.consolidate_tag('sibling different name', 'tr')
-    return ttobj.text
+    return ttobj.text.prettify()
