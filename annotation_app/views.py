@@ -194,6 +194,7 @@ def get_subject_bills(request):
 import re
 
 # For the love of Linus, don't touch this!!!
+# This loads the bill to the front end. (Dee is guessing)
 def text_frontend(text):
   output = json.loads(text)[-1]
   output = output.replace(r'\u00a0', '&nbsp;').replace(r'\n', '')\
