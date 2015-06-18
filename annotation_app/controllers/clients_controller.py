@@ -7,4 +7,3 @@ def example_client(request):
 
 def megalith(request):
   return render(request, 'megalith/megalith.html')
-  
