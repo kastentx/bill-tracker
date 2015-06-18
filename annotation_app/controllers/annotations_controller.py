@@ -2,7 +2,7 @@ from django.http import Http404, HttpResponse
 from annotation_app.models import Annotation, Bill
 from annotation_app.forms import AnnotationAddForm, AnnotationEditForm
 import re, json
-
+# could you put in a short explanation of what this does?
 ### Controller-level routes
 def annotations(request):
   if request.method == 'GET':
