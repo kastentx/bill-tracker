@@ -44,7 +44,7 @@ class html_cleanup():
     def remove_title(self):
         self.title = re.sub(r'(\s\s+)',r' ', self.text('title')[0].extract().get_text())
         #gets the second table in text which contains the bill. 
-        self.text = self.text('table')[1].extract()
+        self.text = self.text('table')[-1].extract()
         #gets the first sentence of the bill.
         for x in self.text('td'):
             chkstring = x.get_text() #TODO ask mark if he wants the text extracted.
