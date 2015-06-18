@@ -14,6 +14,9 @@ Including another URLconf
   2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
+from annotation_app.controllers import annotations_controller,\
+  comments_controller, clients_controller
+# Deprecated
 from annotation_app import views
 
 urlpatterns = [
@@ -38,20 +41,22 @@ urlpatterns = [
   url(r'^subjects/(?P<subject_id>\d+)/$', views.subject, name='subject'),
 
   # Annotations routes
-  url(r'^annotations/$', views.annotations, name='annotations'),
-  url(r'^annotations/(?P<annotation_id>\d+)/$', views.annotation,
-    name='annotation'),
+  url(r'^annotations/$', annotations_controller.annotations,
+    name='annotations'),
+  url(r'^annotations/(?P<annotation_id>\d+)/$',
+    annotations_controller.annotation, name='annotation'),
 
   # Comments routes
-  url(r'^addcomment/$', views.add_comment, name='add_comment'),
-  url(r'^comments/(?P<comment_id>\d+)/$', views.comment, name='comment'),
+  url(r'^addcomment/$', comments_controller.add_comment, name='add_comment'),
+  url(r'^comments/(?P<comment_id>\d+)/$', comments_controller.comment,
+    name='comment'),
+  url(r'^comments/(?P<comment_id>\d+)/edit/$', comments_controller.edit_comment,
+    name='edit_comment'),
 
   # Frontend examples routes
-  url(r'^example-client/$', views.example_client, name='example_client'),
-  url(r'^megalith/$', views.megalith, name='megalith'),
-
-  # Temporarily deprecated
-  # url(r'^bills/(?P<bill_id>\d+)/edit/$', views.edit_bill, name='edit_bill'),
+  url(r'^example-client/$', clients_controller.example_client,
+    name='example_client'),
+  url(r'^megalith/$', clients_controller.megalith, name='megalith'),
 
   # Deprecated
   # url(r'^index/$', views.index),
