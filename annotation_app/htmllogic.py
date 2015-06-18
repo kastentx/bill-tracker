@@ -100,8 +100,12 @@ class html_cleanup():
                 if re.search(x[0], list(i.stripped_strings)[0]):
                     i.name = x[2]
                     i['class'] = x[1]
-
-
+    def remove_allspaces(self):
+        self.output = self.text.prettify()     
+        self.output = self.output.split()        
+        self.output = ' '.join(self.output)      
+        self.output = re.sub(r'\{.+\}\s*', '',self.output) 
+    
 
 
 def htmltext(text):
@@ -122,4 +126,5 @@ def htmltext(text):
     ttobj.add_tags('tr')
     #consolidate tag diff sib tr
     ttobj.consolidate_tag('sibling different name', 'tr')
-    return ttobj.text.prettify()
+    ttobj.remove_allspaces()
+    return ttobj.output
