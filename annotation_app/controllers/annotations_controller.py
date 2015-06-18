@@ -2,8 +2,12 @@ from django.http import Http404, HttpResponse
 from annotation_app.models import Annotation, Bill
 from annotation_app.forms import AnnotationAddForm, AnnotationEditForm
 import re, json
-# could you put in a short explanation of what this does?
+
 ### Controller-level routes
+# annotations and annotation routes to controller actions below.
+# annotations handles the annotation-list and creating a new annotation
+# annotation handles individual annotations that have an id (update and delete)
+
 def annotations(request):
   if request.method == 'GET':
     return all(request)
@@ -28,6 +32,10 @@ def annotation(request, annotation_id):
   #   return render(request, 'annotation.html', context)
 
 ### Controller actions
+# These handle all the actual processing of requests
+# all: annotation-list
+# create_update: create or update a new or existing annotation
+# delete: divides an annotation's id by zero, ending it's existence, forever
 
 def all(request):
   bill_id = re.search(r'bills/(\d+)/$',
@@ -105,6 +113,7 @@ def delete(annotation_id):
 
 ### Helper functions
 
+# Converts datetime to milliseconds since epoch
 import datetime
 def unix_time(dt):
   naive = dt.replace(tzinfo=None)

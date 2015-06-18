@@ -193,10 +193,16 @@ def get_subject_bills(request):
 
 import re
 
-# For the love of Linus, don't touch this!!!
-# This loads the bill to the front end. (Dee is guessing)
+### For the love of Linus, don't touch this!!!
+# This does text post-processing before sending to the templates
+# You can comment out the lines to see what they do to something like /bill/1/
+# (but don't comment out the first or last lines though!)
+# Basically, a way for me to fix presentation problems without bothering the
+# rest of the team
+
 def text_frontend(text):
-  output = json.loads(text)[-1]
+  output = text
+  output = json.loads(output)[-1]
   output = output.replace(r'\u00a0', '&nbsp;').replace(r'\n', '')\
     .replace(r'\"', '"')#.replace('</center>', '</div>')\
     #.replace('<center>', '<div style="text-align:center;">')
