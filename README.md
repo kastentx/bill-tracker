@@ -7,36 +7,39 @@
 
 ## <a name="getting-started"></a>Getting Started
 
-Install Python 3:
+**Install Python 3**:
 https://www.python.org/downloads/
 or
 http://conda.pydata.org/miniconda.html
 
-Clone our repo:
+**Clone our repo**:
 
     git clone https://github.com/bill-tracker/bill-tracker.git
 
-Install all dependencies:
+**Install all dependencies**:
 
     pip install -r requirements.txt
+
 or (needs verification):
 https://groups.google.com/a/continuum.io/forum/#!topic/conda/PiM9sjWyXFU
 
     conda create -n new environment --file requirements.txt
 
-Or, you can install the dependencies manually if you wish.
+Or, you can install the dependencies manually if you wish / need.
 
-Initialization:
+**Initialization**:
 
     python manage.py migrate
     python manage.py makemigrations annotation_app
     python manage.py migrate #(yes, again)
 
-Run server:
+Respond with 'y' when prompted.
+
+**Run server**:
 
     python manage.py runserver
 
-Django shell (Good for checking the contents of the models during development or testing, or just generally trying things out):
+**Django shell** (Optional, good for checking the contents of the models during development or testing, or just generally trying things out):
 
     python manage.py shell
 

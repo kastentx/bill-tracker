@@ -1,7 +1,7 @@
 import re
 import bs4
 import requests
-
+from annotation_app import htmllogic
 class Bill_Import():
 
     def __init__(self):
@@ -51,12 +51,8 @@ class Bill_Import():
             if not res.status_code == requests.codes.ok:
                 print('not a vaild bill!')
                 break
-            html = bs4.BeautifulSoup(res.text)
-            clean_text = html.get_text()
-            clean_text = clean_text.split()
-            clean_text = ' '.join(clean_text)
-            clean_text = re.sub(r'\{.+\}\s*', '',clean_text)
-            self.billtext.append(clean_text)
+            self.billtext.append(res.text)
+            self.billtext[-1] = htmllogic.htmltext(self.billtext[-1])
 
 
     def pull_history(self):
@@ -80,12 +76,14 @@ class Bill_Import():
         subjects_list = td.split("()")
         # Skip last element (it's an empty string anyway)
         subjects_list = subjects_list[:len(subjects_list)-1]
+
         self.subjects = subjects_list
     def set_data(self):
         self.set_author()
         self.set_coauthor()
         self.set_sponsors()
         self.set_cosponsors()
+        self.set_subjects()
         
     def set_author(self):
         self.authors = self.check_empty('cellAuthors')
