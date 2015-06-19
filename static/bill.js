@@ -62,7 +62,10 @@ window.onload = function() {
   showViewPermissionsCheckbox: true,
   showEditPermissionsCheckbox: false
   });
-  $('.billarea').annotator().annotator('addPlugin', 'AnnotatorViewer');
+
+  // margin side-tab and scrollbar
+  $('.billarea').annotator().annotator('addPlugin', 'AnnotatorViewer'); 
+  $('#anotacions-uoc-panel').slimscroll({height: '100%'});
 
   billarea.annotator('addPlugin', 'Store', {
     // The endpoint of the store on your server.
